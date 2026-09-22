@@ -83,6 +83,10 @@ python -m pip install -r requirements-dev.txt
 pytest -q
 ```
 
+## Другие приложения в этом репозитории
+
+- [`ios/FantasyRoadGame`](ios/FantasyRoadGame) — «Дорога фантазий», отдельное SwiftUI-приложение для iOS: карточная игра-разговор для пары в дороге или дома.
+
 ## Лицензия
 
 MIT. См. [`LICENSE`](LICENSE).
