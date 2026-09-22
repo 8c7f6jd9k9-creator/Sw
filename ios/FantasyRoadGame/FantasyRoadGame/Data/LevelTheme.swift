@@ -10,6 +10,7 @@ enum LevelTheme {
         case 3: return [Color(hex: "FF8A65"), Color(hex: "FF5252")]
         case 4: return [Color(hex: "E53960"), Color(hex: "B71C4A")]
         case 5: return [Color(hex: "3A0CA3"), Color(hex: "240046")]
+        case 6: return [Color(hex: "1B1B2F"), Color(hex: "16161D")]
         default: return [Color.pink, Color.purple]
         }
     }
