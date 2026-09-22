@@ -79,6 +79,36 @@ struct SettingsView: View {
                     LabeledContent("Сыграно карточек", value: "\(store.stats.totalCardsPlayed)")
                     LabeledContent("В копилке", value: "\(store.favoriteIDs.count)")
                     LabeledContent("Сохранено сценариев", value: "\(store.savedScenarios.count)")
+                    LabeledContent("Достижения", value: "\(unlockedAchievementsCount)/\(AchievementCatalog.all.count)")
+                }
+
+                Section("Достижения") {
+                    ForEach(AchievementCatalog.all) { achievement in
+                        let unlocked = achievement.isUnlocked(store)
+                        HStack(spacing: 12) {
+                            Image(systemName: unlocked ? achievement.icon : "lock.fill")
+                                .font(.title3)
+                                .foregroundStyle(unlocked ? Color.accentColor : .secondary)
+                                .frame(width: 28)
+
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(achievement.title)
+                                    .font(.subheadline.bold())
+                                    .foregroundStyle(unlocked ? .primary : .secondary)
+                                Text(achievement.subtitle)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+
+                            Spacer()
+
+                            if unlocked {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundStyle(.green)
+                            }
+                        }
+                        .opacity(unlocked ? 1 : 0.55)
+                    }
                 }
 
                 Section("Сброс") {
@@ -120,5 +150,9 @@ struct SettingsView: View {
         store.settings.playerOneName = playerOne.isEmpty ? "Игрок 1" : playerOne
         store.settings.playerTwoName = playerTwo.isEmpty ? "Игрок 2" : playerTwo
         store.persistSettings()
+    }
+
+    private var unlockedAchievementsCount: Int {
+        AchievementCatalog.all.filter { $0.isUnlocked(store) }.count
     }
 }

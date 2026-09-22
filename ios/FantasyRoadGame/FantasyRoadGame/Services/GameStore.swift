@@ -18,6 +18,7 @@ final class GameStore: ObservableObject {
     @Published var isPlayerOneTurn: Bool = true
 
     private var deck: [GameCard] = []
+    private var lastScenario: GeneratedScenario?
     private let defaults = UserDefaults.standard
 
     var levels: [GameLevel] {
@@ -99,9 +100,17 @@ final class GameStore: ObservableObject {
         selectedLevelID = id
         defaults.set(id, forKey: StorageKey.selectedLevelID.rawValue)
         roundNumber = 1
+        lastScenario = nil
         buildDeck()
         drawNextCard()
         HapticsManager.shared.selection()
+    }
+
+    /// Jumps to a random level other than the current one (excludes the custom deck).
+    func selectRandomLevel() {
+        let candidates = (1...6).filter { $0 != selectedLevelID }
+        guard let randomID = candidates.randomElement() else { return }
+        selectLevel(randomID)
     }
 
     private func buildDeck() {
@@ -174,13 +183,23 @@ final class GameStore: ObservableObject {
         guard let bank = ScenarioContent.bank(for: selectedLevelID) else { return nil }
         let scenario = GeneratedScenario(
             levelID: selectedLevelID,
-            whereText: bank.wheres.randomElement() ?? "",
-            whenText: bank.whens.randomElement() ?? "",
-            withWhomText: bank.withWhoms.randomElement() ?? "",
-            goalText: bank.goals.randomElement() ?? ""
+            whereText: randomPick(from: bank.wheres, avoiding: lastScenario?.whereText),
+            whenText: randomPick(from: bank.whens, avoiding: lastScenario?.whenText),
+            withWhomText: randomPick(from: bank.withWhoms, avoiding: lastScenario?.withWhomText),
+            goalText: randomPick(from: bank.goals, avoiding: lastScenario?.goalText)
         )
+        lastScenario = scenario
         HapticsManager.shared.selection()
         return scenario
+    }
+
+    /// Picks a random element, avoiding an immediate repeat of the previous value when possible.
+    private func randomPick(from pool: [String], avoiding previous: String?) -> String {
+        guard pool.count > 1, let previous else {
+            return pool.randomElement() ?? ""
+        }
+        let candidates = pool.filter { $0 != previous }
+        return candidates.randomElement() ?? pool.randomElement() ?? ""
     }
 
     func saveScenario(_ scenario: GeneratedScenario) {

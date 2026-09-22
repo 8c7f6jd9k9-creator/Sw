@@ -20,8 +20,21 @@ struct LevelPickerView: View {
 
     private var listBody: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("Уровень")
-                .font(.title2.bold())
+            HStack {
+                Text("Уровень")
+                    .font(.title2.bold())
+
+                Spacer()
+
+                Button {
+                    store.selectRandomLevel()
+                } label: {
+                    Label("Наугад", systemImage: "shuffle")
+                        .font(.caption.bold())
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.small)
+            }
 
             Text("Начните легко и повышайте уровень, только когда обоим комфортно.")
                 .font(.subheadline)
@@ -46,6 +59,18 @@ struct LevelPickerView: View {
     private var chipsBody: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 10) {
+                Button {
+                    store.selectRandomLevel()
+                } label: {
+                    Image(systemName: "shuffle")
+                        .font(.subheadline.bold())
+                        .padding(10)
+                        .background(Color.secondary.opacity(0.1))
+                        .clipShape(Circle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Случайный уровень")
+
                 ForEach(store.levels) { level in
                     Button {
                         store.selectLevel(level.id)
@@ -90,6 +115,16 @@ struct LevelPickerView: View {
                 }
 
                 Spacer()
+
+                if let played = store.stats.perLevelPlayed[level.id], played > 0 {
+                    Text("\(played)")
+                        .font(.caption.bold())
+                        .foregroundStyle(.secondary)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.secondary.opacity(0.12))
+                        .clipShape(Capsule())
+                }
 
                 if store.selectedLevelID == level.id {
                     Image(systemName: "checkmark.circle.fill")
