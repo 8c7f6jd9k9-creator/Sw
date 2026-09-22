@@ -8,6 +8,7 @@ final class GameStore: ObservableObject {
     @Published var stats: GameStats
     @Published var favoriteIDs: Set<String>
     @Published var customCards: [GameCard]
+    @Published var savedScenarios: [GeneratedScenario]
     @Published var hasOnboarded: Bool
 
     @Published var selectedLevelID: Int
@@ -44,6 +45,7 @@ final class GameStore: ObservableObject {
         self.stats = GameStore.load(GameStats.self, key: .stats) ?? GameStats()
         self.favoriteIDs = Set(GameStore.load([String].self, key: .favorites) ?? [])
         self.customCards = GameStore.load([GameCard].self, key: .customCards) ?? []
+        self.savedScenarios = GameStore.load([GeneratedScenario].self, key: .savedScenarios) ?? []
         self.hasOnboarded = UserDefaults.standard.bool(forKey: StorageKey.hasOnboarded.rawValue)
 
         if UserDefaults.standard.object(forKey: StorageKey.selectedLevelID.rawValue) != nil {
@@ -160,6 +162,37 @@ final class GameStore: ObservableObject {
     func resetFavorites() {
         favoriteIDs.removeAll()
         save(Array(favoriteIDs), key: .favorites)
+        savedScenarios.removeAll()
+        save(savedScenarios, key: .savedScenarios)
+    }
+
+    // MARK: Scenario builder ("Где — Когда — С кем — Куда")
+
+    /// Random scenario for the current level. Only defined for levels 1-5;
+    /// returns nil for the custom deck (0) and the boundaries-discussion level (6).
+    func generateScenario() -> GeneratedScenario? {
+        guard let bank = ScenarioContent.bank(for: selectedLevelID) else { return nil }
+        let scenario = GeneratedScenario(
+            levelID: selectedLevelID,
+            whereText: bank.wheres.randomElement() ?? "",
+            whenText: bank.whens.randomElement() ?? "",
+            withWhomText: bank.withWhoms.randomElement() ?? "",
+            goalText: bank.goals.randomElement() ?? ""
+        )
+        HapticsManager.shared.selection()
+        return scenario
+    }
+
+    func saveScenario(_ scenario: GeneratedScenario) {
+        guard !savedScenarios.contains(where: { $0.id == scenario.id }) else { return }
+        savedScenarios.append(scenario)
+        save(savedScenarios, key: .savedScenarios)
+        HapticsManager.shared.success()
+    }
+
+    func removeScenario(_ scenario: GeneratedScenario) {
+        savedScenarios.removeAll { $0.id == scenario.id }
+        save(savedScenarios, key: .savedScenarios)
     }
 
     // MARK: Custom cards

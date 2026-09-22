@@ -7,4 +7,5 @@ enum StorageKey: String {
     case stats
     case customCards
     case selectedLevelID
+    case savedScenarios
 }

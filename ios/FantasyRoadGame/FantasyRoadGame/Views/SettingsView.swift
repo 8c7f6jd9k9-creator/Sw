@@ -78,6 +78,7 @@ struct SettingsView: View {
                 Section("Статистика") {
                     LabeledContent("Сыграно карточек", value: "\(store.stats.totalCardsPlayed)")
                     LabeledContent("В копилке", value: "\(store.favoriteIDs.count)")
+                    LabeledContent("Сохранено сценариев", value: "\(store.savedScenarios.count)")
                 }
 
                 Section("Сброс") {
@@ -104,7 +105,7 @@ struct SettingsView: View {
                 Button("Отмена", role: .cancel) {}
                 Button("Очистить", role: .destructive) { store.resetFavorites() }
             } message: {
-                Text("Все сохранённые карточки будут удалены безвозвратно.")
+                Text("Все сохранённые карточки и сценарии будут удалены безвозвратно.")
             }
             .alert("Сбросить прогресс?", isPresented: $showResetProgressAlert) {
                 Button("Отмена", role: .cancel) {}

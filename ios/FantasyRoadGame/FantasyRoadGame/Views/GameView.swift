@@ -1,11 +1,21 @@
 import SwiftUI
 
 struct GameView: View {
+
+    enum Mode: String, CaseIterable, Identifiable {
+        case cards = "Карточки"
+        case scenario = "Сценарий"
+        var id: String { rawValue }
+    }
+
     @EnvironmentObject var store: GameStore
+    @State private var mode: Mode = .cards
 
     @State private var dragOffset: CGSize = .zero
     @State private var flipAngle: Double = 0
     @State private var cardOpacity: Double = 1
+
+    @State private var currentScenario: GeneratedScenario?
 
     var body: some View {
         NavigationStack {
@@ -38,12 +48,33 @@ struct GameView: View {
     private var gameContent: some View {
         VStack(spacing: 18) {
 
+            Picker("Режим", selection: $mode) {
+                ForEach(Mode.allCases) { pickerMode in
+                    Text(pickerMode.rawValue).tag(pickerMode)
+                }
+            }
+            .pickerStyle(.segmented)
+
             ProgressHeaderView()
 
             if store.settings.coupleModeEnabled {
                 TurnBadgeView()
             }
 
+            switch mode {
+            case .cards:
+                cardsContent
+            case .scenario:
+                scenarioContent
+            }
+        }
+        .onChange(of: store.selectedLevelID) { _, _ in
+            currentScenario = nil
+        }
+    }
+
+    private var cardsContent: some View {
+        VStack(spacing: 18) {
             if let card = store.currentCard {
                 CardView(card: card)
                     .offset(dragOffset)
@@ -63,6 +94,65 @@ struct GameView: View {
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
         }
+    }
+
+    private var scenarioContent: some View {
+        VStack(spacing: 18) {
+            if (1...5).contains(store.selectedLevelID) {
+                ScenarioCardView(scenario: currentScenario)
+
+                HStack(spacing: 16) {
+                    Button {
+                        generateScenario()
+                    } label: {
+                        Label(currentScenario == nil ? "Сгенерировать" : "Ещё раз", systemImage: "shuffle")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
+
+                    Button {
+                        saveScenario()
+                    } label: {
+                        Label("Сохранить", systemImage: "heart.fill")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.bordered)
+                    .controlSize(.large)
+                    .tint(.pink)
+                    .disabled(currentScenario == nil)
+                }
+
+                Text("Случайное сочетание «где — когда — с кем — куда» для текущего уровня. Можно крутить сколько угодно раз.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+            } else {
+                unsupportedScenarioLevelView
+            }
+        }
+        .onAppear {
+            if currentScenario == nil {
+                generateScenario()
+            }
+        }
+    }
+
+    private var unsupportedScenarioLevelView: some View {
+        VStack(spacing: 14) {
+            Text("🎲")
+                .font(.system(size: 44))
+            Text("Конструктор сценариев работает для уровней 1–5")
+                .font(.headline)
+            Text("Выберите один из основных уровней, чтобы собрать случайный сценарий вечера.")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+        }
+        .padding(40)
+        .frame(maxWidth: .infinity)
+        .background(Color.secondary.opacity(0.08))
+        .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
     }
 
     private var emptyDeckView: some View {
@@ -159,5 +249,14 @@ struct GameView: View {
                 cardOpacity = 1
             }
         }
+    }
+
+    private func generateScenario() {
+        currentScenario = store.generateScenario()
+    }
+
+    private func saveScenario() {
+        guard let scenario = currentScenario else { return }
+        store.saveScenario(scenario)
     }
 }
