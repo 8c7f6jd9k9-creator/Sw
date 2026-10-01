@@ -136,7 +136,7 @@ class NormativeCatalog:
 
     def _upgrade_bundled_text(self, rec, source_id, candidate):
         """Прежняя копия из комплекта → очищенная копия того же документа."""
-        source = next((s for s in self.kb.sources() if s['id'] == source_id), None)
+        source = self.kb.source(source_id)
         if source is None or not rec.get('original_sha256') or source['sha256'] != rec['original_sha256']:
             return False
         if hashlib.sha256(candidate.read_bytes()).hexdigest() != rec.get('sha256'):
@@ -148,7 +148,7 @@ class NormativeCatalog:
                 db.execute('UPDATE normative_catalog SET provenance=? WHERE act_id=?', (self._user_copy_provenance(rec), rec['id']))
         return True
 
-    def seed(self):
+    def seed(self, progress=None):
         manifests, errors = self._manifests()
         with self._db() as db:
             for act_id in EXCLUDED_ACTS:
@@ -158,7 +158,9 @@ class NormativeCatalog:
                         if sid is not None:
                             db.execute('UPDATE kb_sources SET active=0 WHERE id=?',(sid,))
         created, texts, texts_upgraded, cards_refreshed = 0, 0, 0, 0
-        for act_id, rec in manifests.items():
+        for index, (act_id, rec) in enumerate(manifests.items(), 1):
+            if progress:
+                progress(index, len(manifests), rec['title'])
             with self._db() as db:
                 row = db.execute('SELECT * FROM normative_catalog WHERE act_id=?', (act_id,)).fetchone()
                 if not row:

@@ -6,6 +6,7 @@ import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 from knowledge import KnowledgeBase
 from training import TrainingStore
+from ui_scale import fit_window
 
 
 def _text(parent, height=5, readonly=False):
@@ -128,7 +129,7 @@ class _WorkerTab(ttk.Frame):
     def _show_json(self, title, data):
         window = tk.Toplevel(self)
         window.title(title)
-        window.geometry('780x520')
+        fit_window(window, 780, 520)
         _set_text(_text(window, height=25, readonly=True), json.dumps(data, ensure_ascii=False, indent=2, default=str))
 
 

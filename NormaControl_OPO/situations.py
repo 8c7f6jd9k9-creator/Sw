@@ -10,6 +10,7 @@ import json
 import re
 import shutil
 import sqlite3
+import tempfile
 import uuid
 from contextlib import contextmanager
 from datetime import date, datetime
@@ -293,15 +294,31 @@ class SituationStore:
         photos = [m for m in self.materials(record['id']) if Path(m['stored_name']).suffix in ('.jpg', '.jpeg', '.png')]
         if photos:
             story.append(PageBreak())
-        for m in self.materials(record['id']):
-            path = self.material_path(m['id'])
-            story.append(Paragraph(html.escape(m['original_name']), styles['Heading3']))
-            if path.suffix.lower() in ('.jpg', '.jpeg', '.png'):
-                try:
-                    story += [Image(str(path), width=460, height=300, kind='proportional'), Spacer(1, 8)]
-                except Exception as exc:
-                    raise ValueError('Не удалось включить изображение в PDF: ' + m['original_name']) from exc
-        styles['BodyText'].textColor = colors.black
-        story.append(Paragraph('Подбор источников предварительный. Редакция и применимость требуют проверки. Решение фиксирует указанный специалист.', styles['BodyText']))
-        SimpleDocTemplate(str(target), pagesize=A4, leftMargin=42, rightMargin=42, topMargin=42, bottomMargin=42).build(story)
+        with tempfile.TemporaryDirectory(prefix='normacontrol-pdf-') as tmp:
+            for m in self.materials(record['id']):
+                path = self.material_path(m['id'])
+                story.append(Paragraph(html.escape(m['original_name']), styles['Heading3']))
+                if path.suffix.lower() in ('.jpg', '.jpeg', '.png'):
+                    try:
+                        story += [Image(str(self._pdf_photo(path, Path(tmp))), width=460, height=300, kind='proportional'), Spacer(1, 8)]
+                    except Exception as exc:
+                        raise ValueError('Не удалось включить изображение в PDF: ' + m['original_name']) from exc
+            styles['BodyText'].textColor = colors.black
+            story.append(Paragraph('Подбор источников предварительный. Редакция и применимость требуют проверки. Решение фиксирует указанный специалист. Фотографии приложены без автоматического анализа.', styles['BodyText']))
+            SimpleDocTemplate(str(target), pagesize=A4, leftMargin=42, rightMargin=42, topMargin=42, bottomMargin=42).build(story)
+        return target
+
+    @staticmethod
+    def _pdf_photo(path, folder):
+        """Копия фото для отчёта: поворот по EXIF (снимки телефона) и разумное разрешение.
+
+        Оригинал в базе не меняется."""
+        from PIL import Image as PILImage, ImageOps
+        with PILImage.open(path) as image:
+            image = ImageOps.exif_transpose(image)
+            if image.mode not in ('RGB', 'L'):
+                image = image.convert('RGB')
+            image.thumbnail((2000, 2000))
+            target = folder / (uuid.uuid4().hex + '.jpg')
+            image.save(target, 'JPEG', quality=88)
         return target

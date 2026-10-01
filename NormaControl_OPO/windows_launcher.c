@@ -14,7 +14,8 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE previous, PWSTR args, int show
     *last = 0;
     if (wcslen(root) * 3 + wcslen(args) > 32000) return 1;
     swprintf(python, 32768, L"%ls\\runtime\\pythonw.exe", root);
-    swprintf(command, 32768, L"\"%ls\" -I \"%ls\\app_entry.py\" %ls", python, root, args);
+    /* -I игнорирует PYTHON*-переменные, поэтому UTF-8 режим включается ключом -X utf8. */
+    swprintf(command, 32768, L"\"%ls\" -I -X utf8 \"%ls\\app_entry.py\" %ls", python, root, args);
     si.cb = sizeof(si);
     SetEnvironmentVariableW(L"PYTHONUTF8", L"1");
     if (!CreateProcessW(python, command, NULL, NULL, FALSE, 0, NULL, root, &si, &pi)) {

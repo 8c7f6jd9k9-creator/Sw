@@ -15,6 +15,7 @@ from pathlib import Path
 from xml.etree import ElementTree as ET
 
 from service_text import REMOVED_MARK, clean_text
+from winproc import hidden
 
 MAX_FILE = 32 * 1024 * 1024
 MAX_PAGES = 150
@@ -57,6 +58,7 @@ class KnowledgeBase:
                 db.execute('ALTER TABLE kb_sources ADD COLUMN evidence_id INTEGER')
             if 'retrieval_authorized' not in [r['name'] for r in db.execute('PRAGMA table_info(kb_sources)')]:
                 db.execute('ALTER TABLE kb_sources ADD COLUMN retrieval_authorized INTEGER NOT NULL DEFAULT 0')
+            db.execute('CREATE INDEX IF NOT EXISTS kb_chunks_source ON kb_chunks(source_id)')
             db.execute('DROP INDEX IF EXISTS kb_identity')
             db.execute('CREATE UNIQUE INDEX kb_identity ON kb_sources(sha256,COALESCE(asset_id,-1),COALESCE(document_id,-1),COALESCE(evidence_id,-1),edition,source_url)')
 
@@ -76,7 +78,7 @@ class KnowledgeBase:
         error = ''
         if binary:
             try:
-                p = subprocess.run([binary, '--list-langs'], capture_output=True, text=True, timeout=10)
+                p = subprocess.run([binary, '--list-langs'], capture_output=True, text=True, timeout=10, **hidden())
                 languages = [line.strip() for line in p.stdout.splitlines()[1:] if line.strip()]
                 if p.returncode:
                     error = p.stderr.strip()
@@ -88,6 +90,11 @@ class KnowledgeBase:
                 'rus_available': 'rus' in languages, 'eng_available': 'eng' in languages,
                 'error': error or ('Язык rus не установлен; OCR rus+eng недоступен.' if 'rus' not in languages else ''), 'max_file_bytes': MAX_FILE, 'max_pages': MAX_PAGES,
                 'max_text_chars': MAX_TEXT, 'retrieval': 'FTS5 unicode61, lexical OR; no embeddings'}
+
+    def source(self, source_id):
+        with self._db() as db:
+            row = db.execute('SELECT * FROM kb_sources WHERE id=?', (source_id,)).fetchone()
+        return dict(row) if row else None
 
     def sources(self):
         with self._db() as db:
@@ -105,7 +112,7 @@ class KnowledgeBase:
         with tempfile.TemporaryDirectory(prefix='promcontrol-ocr-') as tmp:
             target = Path(tmp) / 'text'
             p = subprocess.run([shutil.which('tesseract'), str(path), str(target), '-l', lang],
-                               capture_output=True, timeout=90)
+                               capture_output=True, timeout=90, **hidden())
             if p.returncode:
                 raise ValueError('Ошибка Tesseract: ' + p.stderr.decode('utf-8', errors='replace')[:500])
             out = target.with_suffix('.txt')

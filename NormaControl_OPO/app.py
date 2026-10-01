@@ -12,6 +12,9 @@ from learning_ui import KnowledgeTab, TrainingTab
 from regulations import NormativeCatalog
 from regulations_ui import RegulationsTab
 from situation_ui import SituationsTab, RequirementsTab
+from ui_scale import fit_window, px, responsive_wraplength, scale_treeview_columns
+
+VERSION='1.0 RC2'
 
 BASE=Path(__file__).resolve().parent
 
@@ -33,18 +36,21 @@ def open_file(path):
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title('НормаКонтроль ОПО • Windows • 1.0 RC1')
-        self.geometry('1380x850'); self.minsize(1000,680)
+        self.title(f'НормаКонтроль ОПО • Windows • {VERSION}')
+        scale_treeview_columns(self)
+        self.window_state=fit_window(self,1380,850,1000,680,maximize_if_small=True)
         self.store=Store(data_root(),BASE/'registry.json'); self.current=None
         self.normative_catalog=NormativeCatalog(self.store.root)
-        self.splash=ttk.Label(self,text="НормаКонтроль ОПО: подготовка базы знаний… Первый запуск может занять несколько минут.",padding=30)
-        self.splash.pack(fill="both",expand=True); self.update_idletasks()
-        self.normative_seed=self.normative_catalog.seed()
+        # Подготовка базы идёт до построения вкладок; окно обновляется, чтобы Windows не считала его зависшим.
+        self.protocol('WM_DELETE_WINDOW',lambda:None)
+        self.splash=ttk.Label(self,text="НормаКонтроль ОПО: подготовка базы знаний… Первый запуск может занять несколько минут.",padding=30,justify='left')
+        self.splash.pack(fill="both",expand=True); self.update()
+        self.normative_seed=self.normative_catalog.seed(progress=self._seed_progress)
         self.normative_catalog.authorize_uploaded_corpus()
         self.splash.destroy()
         self.protocol('WM_DELETE_WINDOW',self.quit_app)
         style=ttk.Style(self); style.theme_use('clam')
-        style.configure('Treeview',rowheight=30,font=('Segoe UI',10))
+        style.configure('Treeview',rowheight=px(self,30),font=('Segoe UI',10))
         style.configure('Treeview.Heading',font=('Segoe UI',10,'bold'))
         style.configure('TButton',padding=6); style.configure('TLabel',font=('Segoe UI',10))
         header=ttk.Frame(self,padding=16); header.pack(fill='x')
@@ -98,8 +104,18 @@ class App(tk.Tk):
         sections.add(self.situations,text='Ситуационные проверки')
         self.norm_requirements=RequirementsTab(sections,self.store,open_file)
         sections.add(self.norm_requirements,text='Проверенные требования')
-        self.status=ttk.Label(self,text=f'Данные: {self.store.root}',padding=(16,8)); self.status.pack(fill='x')
+        self.status=ttk.Label(self,text=f'Данные: {self.store.root}',padding=(16,8)); self.status.pack(fill='x',side='bottom',before=sections)
+        upgraded=self.normative_seed.get('local_texts_upgraded') or 0
+        cleanup=self.normative_seed.get('service_text_cleanup') or {}
+        if upgraded or cleanup.get('sources'):
+            self.status.configure(text=f'Данные: {self.store.root} • Обновление базы: очищенных текстов НД {upgraded}, источников с удалёнными служебными надписями {cleanup.get("sources",0)}. Ссылки и отметки сохранены.')
+        if self.normative_seed.get('errors'):
+            self.status.configure(text=self.status.cget('text')+' • Ошибки каталога: '+str(len(self.normative_seed['errors']))+' (вкладка «Нормативный каталог»).')
+        responsive_wraplength(self)
         self.refresh_assets()
+    def _seed_progress(self,index,total,title):
+        self.splash.configure(text=f'НормаКонтроль ОПО: подготовка базы знаний… {index} из {total}\n{title[:120]}\n\nПервый запуск или обновление может занять несколько минут. Не закрывайте окно.')
+        self.update()
     def send_situation_to_agent(self,record):
         self.sections.select(self.agents)
         self.agents.role.current(self.agents._role_ids.index('regulatory'))
@@ -160,7 +176,7 @@ class App(tk.Tk):
     def source(self):
         asset=self.store.asset(self.require_current()); open_file(BASE/'sources'/asset['source'])
     def dialog(self,title):
-        win=tk.Toplevel(self); win.title(title); win.transient(self); win.grab_set(); win.geometry('650x550')
+        win=tk.Toplevel(self); win.title(title); win.transient(self); win.grab_set(); fit_window(win,650,550)
         frame=ttk.Frame(win,padding=18); frame.pack(fill='both',expand=True)
         return win,frame
     def field(self,frame,label,initial=''):
@@ -178,7 +194,7 @@ class App(tk.Tk):
         asset_id=self.require_current()
         path=filedialog.askopenfilename(parent=self,title='Выберите документ для локального хранения')
         if not path: return
-        win,frame=self.dialog('Добавить документ'); win.geometry('650x730')
+        win,frame=self.dialog('Добавить документ'); fit_window(win,650,730)
         ttk.Label(frame,text=Path(path).name,wraplength=600).pack(anchor='w')
         title=self.field(frame,'Название документа',Path(path).stem); number=self.field(frame,'Номер')
         issued=self.field(frame,'Дата документа • ДД.ММ.ГГГГ'); expiry=self.field(frame,'Окончание срока • ДД.ММ.ГГГГ (пусто = неизвестно)')
@@ -210,7 +226,9 @@ class App(tk.Tk):
     def backup(self):
         path=filedialog.asksaveasfilename(parent=self,title='Сохранить резервную копию вне папки данных',defaultextension='.zip',initialfile='PromControl_backup.zip',filetypes=[('ZIP','*.zip')])
         if path:
-            self.store.backup(path); self.status.configure(text=f'Резервная копия сохранена: {path}')
+            result=self.store.backup(path)
+            missing=f'; отсутствуют файлы: {len(result["missing_files"])}' if result['missing_files'] else ''
+            self.status.configure(text=f'Резервная копия сохранена и проверена (integrity {result["integrity"]}, файлов {result["files"]}{missing}): {path}')
     def quit_app(self):
         self.agents.shutdown()
         self.knowledge.shutdown()

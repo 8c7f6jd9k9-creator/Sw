@@ -16,3 +16,4 @@ Acceptance_report*
 __pycache__/
 *.pyc
 _wine_shim.py
+acceptance/

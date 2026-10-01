@@ -1,4 +1,5 @@
 import tkinter as tk
+from ui_scale import fit_window
 from tkinter import ttk, filedialog, messagebox
 from inspections import APPLICABILITY, WORK_STATUS
 
@@ -127,7 +128,7 @@ class InspectionTab(ttk.Frame):
     def link_document(self):
         check_id=self.require_check(); docs=self.store.cauk_linkable_documents(check_id)
         if not docs: raise ValueError('Нет доступных документов. Добавьте файл здесь или в реестре ОПО.')
-        win=tk.Toplevel(self); win.title('Связать существующий документ'); win.transient(self.winfo_toplevel()); win.grab_set(); win.geometry('850x220')
+        win=tk.Toplevel(self); win.title('Связать существующий документ'); win.transient(self.winfo_toplevel()); win.grab_set(); fit_window(win,850,220)
         frame=ttk.Frame(win,padding=16); frame.pack(fill='both',expand=True)
         ttk.Label(frame,text='Общие вопросы №4, 7, 8 допускают документ из другого ОПО. Файл не копируется повторно.',wraplength=800).pack(anchor='w')
         choice=ttk.Combobox(frame,state='readonly',values=[f'{d["id"]} / {d["reg_no"]} / {d["title"]}' for d in docs]); choice.current(0); choice.pack(fill='x',pady=15)

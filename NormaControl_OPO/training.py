@@ -14,6 +14,8 @@ import uuid
 from datetime import datetime, timezone
 from contextlib import contextmanager
 
+from winproc import hidden
+
 
 def _now():
     return datetime.now(timezone.utc).isoformat()
@@ -132,7 +134,13 @@ class TrainingStore:
         try:
             result['memory'] = {'ram_total_bytes': os.sysconf('SC_PAGE_SIZE') * os.sysconf('SC_PHYS_PAGES')}
         except (AttributeError, OSError, ValueError):
-            pass
+            # Windows: os.sysconf отсутствует; объём памяти и GPU — из локальной диагностики.
+            from hardware import diagnose
+            hardware = diagnose(self.root)
+            if 'total_ram_gib' in hardware:
+                result['memory'] = {'ram_total_bytes': int(hardware['total_ram_gib'] * 1024 ** 3),
+                                    'ram_free_bytes': int(hardware['free_ram_gib'] * 1024 ** 3)}
+            result['nvidia_smi'] = hardware.get('gpu') or hardware.get('gpu_error')
         if result['torch']:
             probe = '''import json,torch
 r={'cuda':torch.cuda.is_available(),'mps':bool(hasattr(torch.backends,'mps') and torch.backends.mps.is_available())}
@@ -142,13 +150,14 @@ if r['cuda']:
 print(json.dumps(r))'''
             try:
                 proc = subprocess.run([sys.executable, '-c', probe], env=_offline_env(),
-                                      capture_output=True, text=True, timeout=40, shell=False)
+                                      capture_output=True, text=True, timeout=40, shell=False, **hidden())
                 if proc.returncode == 0:
                     result.update(json.loads(proc.stdout.strip().splitlines()[-1]))
                 else:
                     result['hardware_error'] = proc.stderr[-1000:]
             except (OSError, subprocess.TimeoutExpired, ValueError, IndexError) as exc:
                 result['hardware_error'] = str(exc)
+        result['recommendation'] = recommend_base(result.get('gpu_memory_free_bytes'), result.get('cuda'))
         return result
 
     def jobs(self):
@@ -186,7 +195,7 @@ print(json.dumps(r))'''
             start = time.monotonic()
             with log.open('w', encoding='utf-8') as stream:
                 proc = subprocess.Popen(command, stdout=stream, stderr=subprocess.STDOUT,
-                                        env=_offline_env(), shell=False)
+                                        env=_offline_env(), shell=False, **hidden())
                 last = ''
                 while proc.poll() is None:
                     if cancel_event is not None and cancel_event.is_set():
@@ -235,6 +244,23 @@ print(json.dumps(r))'''
         return import_model(name, model_dir)
 
 
+def recommend_base(free_vram_bytes, cuda):
+    """Подбор размера базовой модели для LoRA bf16 (r=8, q_proj/v_proj, batch 1, до 512 токенов).
+
+    Оценка: веса bf16 ≈ 2 байта на параметр плюс 15–25 % на активации/градиенты LoRA.
+    Это ориентир, а не гарантия; Ollama на время обучения нужно выгрузить (ollama stop)."""
+    if not cuda or not free_vram_bytes:
+        return 'CUDA не подтверждена: обучение на CPU возможно только для моделей до 0.5–1.5B и очень малых наборов.'
+    free = free_vram_bytes / 1024 ** 3
+    if free >= 19:
+        return 'Свободно {:.1f} ГБ VRAM: подходит база 7B (например, Qwen2.5-7B-Instruct, ~15 ГБ весов bf16). 14B без 4-битной загрузки не поместится.'.format(free)
+    if free >= 9:
+        return 'Свободно {:.1f} ГБ VRAM: подходит база 3B (~6.5 ГБ весов bf16). Для 7B выгрузите модели Ollama и закройте другие GPU-программы.'.format(free)
+    if free >= 4:
+        return 'Свободно {:.1f} ГБ VRAM: подходит база 1.5B.'.format(free)
+    return 'Свободно {:.1f} ГБ VRAM: недостаточно для LoRA; освободите видеопамять.'.format(free)
+
+
 def import_model(name, model_dir):
     """Explicit local Ollama import; preserve previously installed model names."""
     from local_agents import request_json
@@ -262,7 +288,7 @@ def import_model(name, model_dir):
     try:
         proc = subprocess.run([executable, 'create', name, '-f', str(modelfile)],
                               env=_offline_env(), capture_output=True, text=True,
-                              encoding='utf-8', errors='replace', timeout=1800, shell=False)
+                              encoding='utf-8', errors='replace', timeout=1800, shell=False, **hidden())
         if proc.returncode:
             raise ValueError('Ollama не смог импортировать архитектуру/веса: ' + (proc.stderr or proc.stdout)[-4000:])
         found = request_json(endpoint, '/api/show', {'model': name})

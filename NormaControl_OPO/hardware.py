@@ -7,6 +7,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+from winproc import hidden
+
 
 def diagnose(root):
     result = {'system': platform.platform(), 'architecture': platform.machine(),
@@ -26,7 +28,7 @@ def diagnose(root):
     if binary:
         try:
             p = subprocess.run([binary, '--query-gpu=name,memory.total,memory.free,driver_version', '--format=csv,noheader,nounits'],
-                               capture_output=True, text=True, timeout=15, shell=False)
+                               capture_output=True, text=True, timeout=15, shell=False, **hidden())
             if p.returncode:
                 result['gpu_error'] = p.stderr.strip()[:1000]
             else:

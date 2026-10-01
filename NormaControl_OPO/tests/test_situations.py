@@ -70,7 +70,7 @@ class SituationTests(unittest.TestCase):
         mid=self.s.attach(sid,photo); self.assertEqual(mid,self.s.attach(sid,photo))
         photo.unlink(); self.assertTrue(self.s.material_path(mid).is_file())
         self.s.export_report(sid,self.root/'report.html')
-        self.assertIn('&lt;script&gt;', (self.root/'report.html').read_text())
+        self.assertIn('&lt;script&gt;', (self.root/'report.html').read_text(encoding='utf-8'))  # без UTF-8 режима Windows читает cp1251
         self.s.export_report(sid,self.root/'report.pdf')
         pdf=PdfReader(self.root/'report.pdf')
         self.assertIn('НормаКонтроль',pdf.pages[0].extract_text())
