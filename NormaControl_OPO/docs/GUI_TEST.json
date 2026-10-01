@@ -1,9 +1,43 @@
 {
-  "tabs": 8,
-  "scenario": "save -> sources -> human decision -> local agent",
-  "errors": [],
-  "sources": 68,
-  "chunks": 23044,
-  "authorized_nd": 19,
-  "integrity": "ok"
+  "version": "1.0 RC2",
+  "date": "2026-10-01",
+  "scenario": "new situation -> save -> sources (background) -> specialist decision -> send to local agent (через виджеты)",
+  "runs": [
+    {
+      "environment": "Win64 runtime под Wine 9.0, 1920x1080, 100 %",
+      "tabs": 8,
+      "callback_errors": 0,
+      "window": "1380x850",
+      "scenario_passed": true
+    },
+    {
+      "environment": "Win64 runtime под Wine 9.0, 1920x1080, 150 %",
+      "tabs": 8,
+      "callback_errors": 0,
+      "window": "развёрнуто",
+      "scenario_passed": true
+    },
+    {
+      "environment": "Win64 runtime под Wine 9.0, 1024x768, 150 %",
+      "tabs": 8,
+      "callback_errors": 0,
+      "window": "развёрнуто 1012x708",
+      "scenario_passed": true
+    },
+    {
+      "environment": "Linux Python 3.12, Xvfb 1366x768",
+      "tabs": 8,
+      "callback_errors": 0,
+      "window": "1358x678 (RC1: 1380x850, обрезано)",
+      "scenario_passed": true
+    }
+  ],
+  "database": {
+    "sources": 68,
+    "chunks": 22975,
+    "authorized_nd": 19,
+    "service_text_chunks": 0,
+    "integrity": "ok"
+  },
+  "note": "Wine не равен Windows 10; проверка на компьютере пользователя: Acceptance_Windows.cmd"
 }

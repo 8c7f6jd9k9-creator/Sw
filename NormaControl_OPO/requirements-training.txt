@@ -1,4 +1,4 @@
-# PyTorch с CUDA ставится отдельно из https://download.pytorch.org/whl/cu128 (Install_Training_Tools.cmd).
+# PyTorch с CUDA ставится отдельно из https://download.pytorch.org/whl/cu130 (cu128/cu126 как запасные) (Install_Training_Tools.cmd).
 torch>=2.7,<3
 transformers>=4.45,<5
 peft>=0.13,<1

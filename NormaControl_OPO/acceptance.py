@@ -16,6 +16,7 @@ import platform
 import re
 import shutil
 import sqlite3
+from contextlib import closing
 import subprocess
 import sys
 import tempfile
@@ -65,7 +66,13 @@ class Run:
         self.work = Path(tempfile.mkdtemp(prefix='NormaControl_acceptance_'))
         self.data = self.work / 'data'
         self.out = BASE / 'acceptance'
-        self.out.mkdir(exist_ok=True)
+        try:
+            self.out.mkdir(exist_ok=True)
+            (self.out / '.write_test').write_text('ok', encoding='utf-8')
+            (self.out / '.write_test').unlink()
+        except OSError:  # папка программы только для чтения
+            self.out = Path(os.environ.get('LOCALAPPDATA', str(Path.home()))) / 'NormaControlOPO' / 'acceptance'
+            self.out.mkdir(parents=True, exist_ok=True)
         self.stamp = self.started.strftime('%Y%m%d_%H%M%S')
 
     def step(self, name, function):
@@ -128,7 +135,7 @@ class Run:
         catalog.authorize_uploaded_corpus()
         seconds = round(time.monotonic() - begin, 1)
         second = catalog.seed()
-        with sqlite3.connect(self.data / 'promcontrol.sqlite3') as db:
+        with closing(sqlite3.connect(self.data / 'promcontrol.sqlite3')) as db, db:
             sources = db.execute('SELECT COUNT(*) FROM kb_sources').fetchone()[0]
             chunks = db.execute('SELECT COUNT(*) FROM kb_chunks').fetchone()[0]
             authorized = db.execute('SELECT COUNT(*) FROM kb_sources WHERE retrieval_authorized=1').fetchone()[0]
@@ -253,13 +260,15 @@ class Run:
                 app.sections.select(tab)
                 app.update()
                 time.sleep(0.2)
+            scenario = self._gui_scenario(app)
             app.sections.select(tabs[0])
             app.update()
             area = ui_scale.work_area(app)
             result = {'tabs': len(tabs), 'window_state': app.window_state, 'geometry': app.winfo_geometry(),
                       'screen': [app.winfo_screenwidth(), app.winfo_screenheight()], 'work_area': list(area),
                       'dpi_factor': ui_scale.factor(app), 'tk_scaling': float(app.tk.call('tk', 'scaling')),
-                      'dpi_awareness': os.environ.get('NORMACONTROL_DPI', ''), 'callback_errors': errors}
+                      'dpi_awareness': os.environ.get('NORMACONTROL_DPI', ''), 'callback_errors': errors,
+                      'scenario': scenario}
             fits = app.winfo_width() <= area[2] + 16 and app.winfo_height() <= area[3] + 16
             result['fits_work_area'] = fits
             try:
@@ -273,8 +282,42 @@ class Run:
                 result['screenshot_error'] = str(exc)
         finally:
             app.quit_app()
-        if errors or result.get('tabs') != 8 or not result.get('fits_work_area'):
+        scenario = result.get('scenario') or {}
+        if errors or result.get('tabs') != 8 or not result.get('fits_work_area') or not scenario.get('passed'):
             raise RuntimeError(json.dumps(result, ensure_ascii=False))
+        return result
+
+    @staticmethod
+    def _gui_scenario(app):
+        """Через виджеты: новая ситуация → сохранить → источники → решение → передать ИИ."""
+        from situations import CATEGORIES, RISKS
+        tab = app.situations
+        app.sections.select(tab)
+        tab.new()
+        tab.title.set('Приёмка через интерфейс')
+        tab.category.set(CATEGORIES[4])
+        tab.description.insert('1.0', SITUATION)
+        saved = tab.save()
+        tab.analyze()
+        deadline = time.monotonic() + 180
+        while tab._busy and time.monotonic() < deadline:
+            app.update()
+            time.sleep(0.05)
+        app.update()
+        matches = len(tab._matches)
+        tab.reviewer.set('Приёмочная проверка')
+        tab.risk.set(RISKS['medium'])
+        tab.editor.select(2)
+        tab.decision.insert('1.0', 'Тестовое решение специалиста через интерфейс.')
+        tab.decide(False)
+        status = tab.backend.get(tab.current)['status']
+        tab.to_agent()
+        app.update()
+        task = app.agents.task.get('1.0', 'end-1c')
+        result = {'saved': saved, 'matches': matches, 'status_after_decision': status,
+                  'agent_tab_selected': app.sections.select() == str(app.agents),
+                  'agent_task_has_description': SITUATION[:40] in task, 'status_text': tab.status.get()[:200]}
+        result['passed'] = bool(saved and matches and status == 'confirmed' and result['agent_tab_selected'] and result['agent_task_has_description'])
         return result
 
     def reopen(self):
@@ -286,7 +329,7 @@ class Run:
             again = NormativeCatalog(self.data).seed()
         finally:
             store.close()
-        with sqlite3.connect(self.data / 'promcontrol.sqlite3') as db:
+        with closing(sqlite3.connect(self.data / 'promcontrol.sqlite3')) as db, db:
             situations = db.execute('SELECT COUNT(*) FROM nc_situations').fetchone()[0]
         result = {'assets': assets, 'situations': situations, 'created_on_reopen': again['created'],
                   'imported_on_reopen': again['local_texts_imported']}

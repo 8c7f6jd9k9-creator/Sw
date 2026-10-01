@@ -1,3 +1,9 @@
+НормаКонтроль ОПО 1.0 RC2 — журналы проверок, 01.10.2026
+
+=== 1. Windows-runtime комплекта (Python 3.13.16 x64) под Wine 9.0 + Xvfb ===
+Команда: runtime\python.exe -X utf8 -m unittest discover -s tests -v
+(под Wine через тестовую прокладку без KERNEL32.CopyFile2; в поставку не входит)
+
 test_backup_restores_database_and_files (test_core.CoreTests.test_backup_restores_database_and_files) ... ok
 test_completeness_unknown_review_archive (test_core.CoreTests.test_completeness_unknown_review_archive) ... ok
 test_cross_asset_requirement_and_invalid_dates (test_core.CoreTests.test_cross_asset_requirement_and_invalid_dates) ... ok
@@ -15,7 +21,7 @@ test_members_are_snapshot_and_migration_not_reseeded (test_inspections.Inspectio
 test_missing_file_prevents_prepared (test_inspections.InspectionTests.test_missing_file_prevents_prepared) ... ok
 test_report_includes_all_assets_and_unresolved_conditions (test_inspections.InspectionTests.test_report_includes_all_assets_and_unresolved_conditions) ... ok
 test_unjustified_exclusion_and_false_completion_rejected (test_inspections.InspectionTests.test_unjustified_exclusion_and_false_completion_rejected) ... ok
-test_actual_image_and_scanned_pdf_ocr_eng (test_knowledge.KnowledgeTests.test_actual_image_and_scanned_pdf_ocr_eng) ... ok
+test_actual_image_and_scanned_pdf_ocr_eng (test_knowledge.KnowledgeTests.test_actual_image_and_scanned_pdf_ocr_eng) ... skipped 'Tesseract eng unavailable; actual OCR not verified'
 test_diagnostics_real_dependencies_and_missing_source (test_knowledge.KnowledgeTests.test_diagnostics_real_dependencies_and_missing_source) ... ok
 test_direct_cauk_evidence_index_and_missing_registered_file_errors (test_knowledge.KnowledgeTests.test_direct_cauk_evidence_index_and_missing_registered_file_errors) ... ok
 test_docx_paragraph_table_and_truthful_location (test_knowledge.KnowledgeTests.test_docx_paragraph_table_and_truthful_location) ... ok
@@ -47,6 +53,13 @@ test_nonofficial_url_refused_before_network (test_regulations.RegulationsTests.t
 test_official_host_allowlist_and_redirect_refusal (test_regulations.RegulationsTests.test_official_host_allowlist_and_redirect_refusal) ... ok
 test_seed_idempotent_cards_excluded_and_user_flags_preserved (test_regulations.RegulationsTests.test_seed_idempotent_cards_excluded_and_user_flags_preserved) ... ok
 test_user_excluded_517_hidden_and_previous_sources_disabled (test_regulations.RegulationsTests.test_user_excluded_517_hidden_and_previous_sources_disabled) ... ok
+test_upgrade_keeps_ids_flags_and_references (test_service_text.BundledUpgradeTests.test_upgrade_keeps_ids_flags_and_references) ... ok
+test_note_block_and_watermark (test_service_text.CleanTextTests.test_note_block_and_watermark) ... ok
+test_service_lines_removed_norm_text_kept (test_service_text.CleanTextTests.test_service_lines_removed_norm_text_kept) ... ok
+test_tool_removes_brand_and_preserves_blocks (test_service_text.DocxToolTests.test_tool_removes_brand_and_preserves_blocks) ... skipped 'lxml не установлен: инструмент сборки не проверен'
+test_docx_plaque_and_notes_not_indexed_block_numbers_kept (test_service_text.ExtractionTests.test_docx_plaque_and_notes_not_indexed_block_numbers_kept) ... ok
+test_indexed_user_source_cleaned_once_ids_kept (test_service_text.ExtractionTests.test_indexed_user_source_cleaned_once_ids_kept) ... ok
+test_reindex_same_file_keeps_fragment_ids (test_service_text.ExtractionTests.test_reindex_same_file_keeps_fragment_ids) ... ok
 test_authorization_is_separate_from_review (test_situations.SituationTests.test_authorization_is_separate_from_review) ... ok
 test_csv_atomic_and_review_not_trusted (test_situations.SituationTests.test_csv_atomic_and_review_not_trusted) ... ok
 test_curated_source_scope_dates_and_archive_respected (test_situations.SituationTests.test_curated_source_scope_dates_and_archive_respected) ... ok
@@ -63,8 +76,114 @@ test_mocked_training_subprocess_failure_logged_offline (test_training.TrainingTe
 test_reviewed_only_export_and_persistence (test_training.TrainingTests.test_reviewed_only_export_and_persistence) ... ok
 test_split_leakage_case_and_whitespace_rejected (test_training.TrainingTests.test_split_leakage_case_and_whitespace_rejected) ... ok
 test_zero_exit_without_result_is_failure (test_training.TrainingTests.test_zero_exit_without_result_is_failure) ... ok
+test_backup_is_verified_and_restores_into_empty_folder_only (test_windows_rc2.BackupTests.test_backup_is_verified_and_restores_into_empty_folder_only) ... ok
+test_failed_backup_keeps_previous_copy (test_windows_rc2.BackupTests.test_failed_backup_keeps_previous_copy) ... ok
+test_phone_photo_rotated_by_exif_and_downscaled_original_kept (test_windows_rc2.PhotoReportTests.test_phone_photo_rotated_by_exif_and_downscaled_original_kept) ... ok
+test_progress_reported_for_every_record (test_windows_rc2.SeedProgressTests.test_progress_reported_for_every_record) ... ok
+test_window_never_exceeds_work_area (test_windows_rc2.WindowFitTests.test_window_never_exceeds_work_area) ... ok
 
 ----------------------------------------------------------------------
-Ran 65 tests in 5.964s
+Ran 77 tests in 17.660s
 
-OK
+OK (skipped=2)
+
+=== 2. Приёмка на Windows-runtime под Wine (Acceptance, без Ollama), 1920x1080, 100 % ===
+[OK] Окружение и зависимости (0.92 с)
+[OK] Рабочая база не используется (до) (0.0 с)
+[OK] Первичная индексация корпуса НД (11.09 с)
+[OK] Поиск по корпусу и оригиналы (0.06 с)
+[OK] Ситуация: фото/документ → источники → решение → PDF/HTML → повторное открытие (1.0 с)
+[OK] Резервная копия, проверка и восстановление в отдельную папку (4.32 с)
+[OK] Повторное открытие базы (0.43 с)
+[OK] Окно программы: вкладки, экран, масштаб (8.13 с)
+[SKIP] OCR rus+eng (0.02 с)
+[SKIP] Локальная модель Ollama: ответ, ссылки, GPU, сеть (0.0 с)
+[OK] Диагностика обучения (0.03 с)
+[OK] Рабочая база не используется (после) (0.0 с)
+Итог: OK 10, FAIL 0, SKIP 2
+
+=== 3. Linux, Python 3.12.3, Tk 8.6, Xvfb ===
+Команда: python -X utf8 -m unittest discover -s tests -v
+
+test_backup_restores_database_and_files (test_core.CoreTests.test_backup_restores_database_and_files) ... ok
+test_completeness_unknown_review_archive (test_core.CoreTests.test_completeness_unknown_review_archive) ... ok
+test_cross_asset_requirement_and_invalid_dates (test_core.CoreTests.test_cross_asset_requirement_and_invalid_dates) ... ok
+test_date_boundaries (test_core.CoreTests.test_date_boundaries) ... ok
+test_expired_unreviewed_unlinked (test_core.CoreTests.test_expired_unreviewed_unlinked) ... ok
+test_file_copy_and_digest (test_core.CoreTests.test_file_copy_and_digest) ... ok
+test_registry_and_reopen (test_core.CoreTests.test_registry_and_reopen) ... ok
+test_report_escaping_and_unknown_completeness (test_core.CoreTests.test_report_escaping_and_unknown_completeness) ... ok
+test_answer_evidence_and_restart (test_inspections.InspectionTests.test_answer_evidence_and_restart) ... ok
+test_applicability_uses_known_conditions (test_inspections.InspectionTests.test_applicability_uses_known_conditions) ... ok
+test_backup_restores_checks_and_evidence (test_inspections.InspectionTests.test_backup_restores_checks_and_evidence) ... ok
+test_common_document_can_be_reused_without_copy (test_inspections.InspectionTests.test_common_document_can_be_reused_without_copy) ... ok
+test_complete_structure (test_inspections.InspectionTests.test_complete_structure) ... ok
+test_members_are_snapshot_and_migration_not_reseeded (test_inspections.InspectionTests.test_members_are_snapshot_and_migration_not_reseeded) ... ok
+test_missing_file_prevents_prepared (test_inspections.InspectionTests.test_missing_file_prevents_prepared) ... ok
+test_report_includes_all_assets_and_unresolved_conditions (test_inspections.InspectionTests.test_report_includes_all_assets_and_unresolved_conditions) ... ok
+test_unjustified_exclusion_and_false_completion_rejected (test_inspections.InspectionTests.test_unjustified_exclusion_and_false_completion_rejected) ... ok
+test_actual_image_and_scanned_pdf_ocr_eng (test_knowledge.KnowledgeTests.test_actual_image_and_scanned_pdf_ocr_eng) ... ok
+test_diagnostics_real_dependencies_and_missing_source (test_knowledge.KnowledgeTests.test_diagnostics_real_dependencies_and_missing_source) ... ok
+test_direct_cauk_evidence_index_and_missing_registered_file_errors (test_knowledge.KnowledgeTests.test_direct_cauk_evidence_index_and_missing_registered_file_errors) ... ok
+test_docx_paragraph_table_and_truthful_location (test_knowledge.KnowledgeTests.test_docx_paragraph_table_and_truthful_location) ... ok
+test_missing_russian_language_reports_truthfully (test_knowledge.KnowledgeTests.test_missing_russian_language_reports_truthfully) ... skipped 'Russian language is installed; missing-language case not applicable'
+test_real_pdf_page_text_and_exact_citations (test_knowledge.KnowledgeTests.test_real_pdf_page_text_and_exact_citations) ... ok
+test_registered_documents_archive_persistence_and_backup (test_knowledge.KnowledgeTests.test_registered_documents_archive_persistence_and_backup) ... ok
+test_txt_checked_scope_and_injection (test_knowledge.KnowledgeTests.test_txt_checked_scope_and_injection) ... ok
+test_version_archive_dates_and_no_invalid_reindex (test_knowledge.KnowledgeTests.test_version_archive_dates_and_no_invalid_reindex) ... ok
+test_alias_remote_metadata_rejected_before_chat (test_local_agents.LocalAgentTests.test_alias_remote_metadata_rejected_before_chat) ... ok
+test_bad_role_and_empty_task_rejected_before_http (test_local_agents.LocalAgentTests.test_bad_role_and_empty_task_rejected_before_http) ... ok
+test_context_is_non_mutating_and_includes_assets_cauk_and_metadata (test_local_agents.LocalAgentTests.test_context_is_non_mutating_and_includes_assets_cauk_and_metadata) ... ok
+test_exact_citation_ids_warn_on_unprovided_fragment (test_local_agents.LocalAgentTests.test_exact_citation_ids_warn_on_unprovided_fragment) ... ok
+test_external_endpoint_rejected_before_requests (test_local_agents.LocalAgentTests.test_external_endpoint_rejected_before_requests) ... ok
+test_list_and_individual_role_dispatch (test_local_agents.LocalAgentTests.test_list_and_individual_role_dispatch) ... ok
+test_malformed_server_and_chat_errors_are_reported (test_local_agents.LocalAgentTests.test_malformed_server_and_chat_errors_are_reported) ... ok
+test_named_cloud_models_rejected_without_http (test_local_agents.LocalAgentTests.test_named_cloud_models_rejected_without_http) ... ok
+test_output_token_limit_warning (test_local_agents.LocalAgentTests.test_output_token_limit_warning) ... ok
+test_settings_history_restart_and_backup (test_local_agents.LocalAgentTests.test_settings_history_restart_and_backup) ... ok
+test_team_dispatch_and_coordinator_receives_specialist_results (test_local_agents.LocalAgentTests.test_team_dispatch_and_coordinator_receives_specialist_results) ... ok
+test_unavailable_loopback_server (test_local_agents.LocalAgentTests.test_unavailable_loopback_server) ... ok
+test_utf8_request_budget_and_visible_truncation_warning (test_local_agents.LocalAgentTests.test_utf8_request_budget_and_visible_truncation_warning) ... ok
+test_declared_edition_and_hash_preserved (test_regulations.RegulationsTests.test_declared_edition_and_hash_preserved) ... ok
+test_hash_mismatch_does_not_import_file (test_regulations.RegulationsTests.test_hash_mismatch_does_not_import_file) ... ok
+test_html_and_external_final_url_refused_no_kb_import (test_regulations.RegulationsTests.test_html_and_external_final_url_refused_no_kb_import) ... ok
+test_local_path_escape_rejected (test_regulations.RegulationsTests.test_local_path_escape_rejected) ... ok
+test_local_usercopy_indexed_without_claim_of_authenticity (test_regulations.RegulationsTests.test_local_usercopy_indexed_without_claim_of_authenticity) ... ok
+test_mocked_official_text_remains_unreviewed_and_prior_copy_survives_failure (test_regulations.RegulationsTests.test_mocked_official_text_remains_unreviewed_and_prior_copy_survives_failure) ... ok
+test_nonofficial_url_refused_before_network (test_regulations.RegulationsTests.test_nonofficial_url_refused_before_network) ... ok
+test_official_host_allowlist_and_redirect_refusal (test_regulations.RegulationsTests.test_official_host_allowlist_and_redirect_refusal) ... ok
+test_seed_idempotent_cards_excluded_and_user_flags_preserved (test_regulations.RegulationsTests.test_seed_idempotent_cards_excluded_and_user_flags_preserved) ... ok
+test_user_excluded_517_hidden_and_previous_sources_disabled (test_regulations.RegulationsTests.test_user_excluded_517_hidden_and_previous_sources_disabled) ... ok
+test_upgrade_keeps_ids_flags_and_references (test_service_text.BundledUpgradeTests.test_upgrade_keeps_ids_flags_and_references) ... ok
+test_note_block_and_watermark (test_service_text.CleanTextTests.test_note_block_and_watermark) ... ok
+test_service_lines_removed_norm_text_kept (test_service_text.CleanTextTests.test_service_lines_removed_norm_text_kept) ... ok
+test_tool_removes_brand_and_preserves_blocks (test_service_text.DocxToolTests.test_tool_removes_brand_and_preserves_blocks) ... ok
+test_docx_plaque_and_notes_not_indexed_block_numbers_kept (test_service_text.ExtractionTests.test_docx_plaque_and_notes_not_indexed_block_numbers_kept) ... ok
+test_indexed_user_source_cleaned_once_ids_kept (test_service_text.ExtractionTests.test_indexed_user_source_cleaned_once_ids_kept) ... ok
+test_reindex_same_file_keeps_fragment_ids (test_service_text.ExtractionTests.test_reindex_same_file_keeps_fragment_ids) ... ok
+test_authorization_is_separate_from_review (test_situations.SituationTests.test_authorization_is_separate_from_review) ... ok
+test_csv_atomic_and_review_not_trusted (test_situations.SituationTests.test_csv_atomic_and_review_not_trusted) ... ok
+test_curated_source_scope_dates_and_archive_respected (test_situations.SituationTests.test_curated_source_scope_dates_and_archive_respected) ... ok
+test_human_decision_and_edit_invalidation_with_audit (test_situations.SituationTests.test_human_decision_and_edit_invalidation_with_audit) ... ok
+test_new_material_invalidates_decision_but_duplicate_does_not (test_situations.SituationTests.test_new_material_invalidates_decision_but_duplicate_does_not) ... ok
+test_real_links_and_category_without_words_not_a_match (test_situations.SituationTests.test_real_links_and_category_without_words_not_a_match) ... ok
+test_reports_escape_text_include_photo_and_persist_material (test_situations.SituationTests.test_reports_escape_text_include_photo_and_persist_material) ... ok
+test_conflicting_answers_and_invalid_examples (test_training.TrainingTests.test_conflicting_answers_and_invalid_examples) ... ok
+test_diagnostics_report_installed_versions (test_training.TrainingTests.test_diagnostics_report_installed_versions) ... ok
+test_examples_and_jobs_survive_store_backup (test_training.TrainingTests.test_examples_and_jobs_survive_store_backup) ... ok
+test_local_model_required_and_existing_output_preserved (test_training.TrainingTests.test_local_model_required_and_existing_output_preserved) ... ok
+test_mocked_gguf_and_hf_import_no_overwrite_and_offline (test_training.TrainingTests.test_mocked_gguf_and_hf_import_no_overwrite_and_offline) ... ok
+test_mocked_training_subprocess_failure_logged_offline (test_training.TrainingTests.test_mocked_training_subprocess_failure_logged_offline) ... ok
+test_reviewed_only_export_and_persistence (test_training.TrainingTests.test_reviewed_only_export_and_persistence) ... ok
+test_split_leakage_case_and_whitespace_rejected (test_training.TrainingTests.test_split_leakage_case_and_whitespace_rejected) ... ok
+test_zero_exit_without_result_is_failure (test_training.TrainingTests.test_zero_exit_without_result_is_failure) ... ok
+test_backup_is_verified_and_restores_into_empty_folder_only (test_windows_rc2.BackupTests.test_backup_is_verified_and_restores_into_empty_folder_only) ... ok
+test_failed_backup_keeps_previous_copy (test_windows_rc2.BackupTests.test_failed_backup_keeps_previous_copy) ... ok
+test_phone_photo_rotated_by_exif_and_downscaled_original_kept (test_windows_rc2.PhotoReportTests.test_phone_photo_rotated_by_exif_and_downscaled_original_kept) ... ok
+test_progress_reported_for_every_record (test_windows_rc2.SeedProgressTests.test_progress_reported_for_every_record) ... ok
+test_window_never_exceeds_work_area (test_windows_rc2.WindowFitTests.test_window_never_exceeds_work_area) ... ok
+
+----------------------------------------------------------------------
+Ran 77 tests in 9.915s
+
+OK (skipped=1)

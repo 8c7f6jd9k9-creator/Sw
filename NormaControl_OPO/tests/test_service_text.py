@@ -3,6 +3,7 @@ import hashlib
 import importlib.util
 import json
 import sqlite3
+from contextlib import closing
 import tempfile
 import unittest
 import zipfile
@@ -70,7 +71,7 @@ class ExtractionTests(unittest.TestCase):
     def test_docx_plaque_and_notes_not_indexed_block_numbers_kept(self):
         path = write_docx(self.root / 'law.docx', [PLAQUE, NOTE, ARTICLE])
         sid = self.kb.import_file(path, reviewed=True)
-        with sqlite3.connect(self.kb.db_path) as db:
+        with closing(sqlite3.connect(self.kb.db_path)) as db, db:
             rows = db.execute('SELECT location,text FROM kb_chunks WHERE source_id=? ORDER BY id', (sid,)).fetchall()
         self.assertEqual([r[0] for r in rows], ['DOCX блок 1 (таблица), фрагмент 1', 'DOCX блок 3 (абзац), фрагмент 1'])
         self.assertFalse(any(contains_brand(r[1]) for r in rows))
@@ -139,11 +140,11 @@ class BundledUpgradeTests(unittest.TestCase):
             catalog = NormativeCatalog(self.store.root)
             self.assertEqual(catalog.seed()['errors'], [])
             catalog.authorize_uploaded_corpus()
-        with sqlite3.connect(catalog.kb.db_path) as db:
+        with closing(sqlite3.connect(catalog.kb.db_path)) as db, db:
             db.execute('DROP TABLE kb_maintenance')  # в базе RC1 этой таблицы нет
         sid = catalog.records()[0]['imported_text_source_id']
         catalog.kb.update_source(sid, True, True, edition=record['edition_from_document'])
-        with sqlite3.connect(catalog.kb.db_path) as db:
+        with closing(sqlite3.connect(catalog.kb.db_path)) as db, db:
             before = dict(db.execute('SELECT location,id FROM kb_chunks WHERE source_id=?', (sid,)).fetchall())
         note_id = before['DOCX блок 4 (таблица), фрагмент 1']
         situations = SituationStore(self.store.root)
@@ -159,7 +160,7 @@ class BundledUpgradeTests(unittest.TestCase):
         source = next(s for s in catalog.kb.sources() if s['id'] == sid)
         self.assertEqual((source['reviewed'], source['active'], source['retrieval_authorized']), (1, 1, 1))
         self.assertEqual(source['edition'], 'ред. от 01.02.2026 (по заголовку документа)')
-        with sqlite3.connect(catalog.kb.db_path) as db:
+        with closing(sqlite3.connect(catalog.kb.db_path)) as db, db:
             after = dict(db.execute('SELECT location,id FROM kb_chunks WHERE source_id=?', (sid,)).fetchall())
             texts = [r[0] for r in db.execute('SELECT text FROM kb_chunks')]
             provenance = db.execute("SELECT provenance FROM normative_catalog WHERE act_id='TEST1'").fetchone()[0]

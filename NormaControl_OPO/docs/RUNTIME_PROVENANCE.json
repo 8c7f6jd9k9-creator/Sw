@@ -10,5 +10,23 @@
     "lib",
     "tcltk"
   ],
-  "windows_execution_tested": false
+  "windows_execution_tested": false,
+  "wine_execution_tested": {
+    "date": "2026-10-01",
+    "wine": "9.0 (Ubuntu 24.04)",
+    "checks": [
+      "--self-test",
+      "77 unittest",
+      "--acceptance --skip-ollama (100% и 150%)",
+      "NormaControl.exe --smoke-test",
+      "обновление базы RC1"
+    ],
+    "note": "Wine не равен Windows 10. В Wine 9.0 нет KERNEL32.CopyFile2 (используется shutil.copy2 в Python 3.13); для прогонов применялась тестовая прокладка вне поставки."
+  },
+  "launcher": {
+    "source": "windows_launcher.c",
+    "build": "x86_64-w64-mingw32-gcc 13 -municode -mwindows -static -Os windows_launcher.c -o NormaControl.exe -luser32",
+    "command": "runtime\\pythonw.exe -I -X utf8 app_entry.py",
+    "rc2_change": "добавлен -X utf8"
+  }
 }
