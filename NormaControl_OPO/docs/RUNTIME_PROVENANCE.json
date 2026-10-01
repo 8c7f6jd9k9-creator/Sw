@@ -28,5 +28,17 @@
     "build": "x86_64-w64-mingw32-gcc 13 -municode -mwindows -static -Os windows_launcher.c -o NormaControl.exe -luser32",
     "command": "runtime\\pythonw.exe -I -X utf8 app_entry.py",
     "rc2_change": "добавлен -X utf8"
+  },
+  "lean_runtime_rc3": {
+    "reason": "один архив меньше 30 МБ (ограничение передачи файла)",
+    "removed": [
+      "PIL/_avif и PIL/_webp (форматы AVIF/WebP; Pillow штатно отключает их)",
+      "reportlab/fonts (образцы шрифтов; отчёты используют resources/DejaVuSans.ttf)",
+      "ensurepip/_bundled (pip загружается по требованию tools/bootstrap_pip.py с проверкой SHA-256 по PyPI)",
+      "idlelib, venv, pydoc_data, NEWS.txt",
+      "tcl: tk8.6/demos, tk8.6/images, tcl8.6/tzdata, файлы сборки (*.lib, nmake, *Config.sh), libs/"
+    ],
+    "remaining_files_verified": "все оставшиеся файлы runtime совпадают по SHA-256 с поставкой RC1",
+    "checked": "91 unittest и приёмка на облегчённом runtime под Wine; pip bootstrap под Wine"
   }
 }

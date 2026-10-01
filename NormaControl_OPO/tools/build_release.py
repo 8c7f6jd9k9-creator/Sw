@@ -8,7 +8,8 @@
 2. Модули программы компилируются в байт-код Python 3.13 (.pyc без исходников); entry.pyc
    получает таблицу SHA-256 остальных модулей и при запуске отказывается работать с
    изменёнными или перекрытыми исходниками модулями. Исходный код — в репозитории.
-3. Создаёт один архив программы и FILE_SHA256.json.
+3. Создаёт один архив программы и FILE_SHA256.json; из runtime исключаются неиспользуемые
+   части (LEAN_REMOVE), чтобы архив был одним файлом меньше 30 МБ.
 4. С --vendor-key — отдельный комплект издателя с закрытым ключом (в архив программы
    не попадает).
 """
@@ -29,7 +30,24 @@ EXCLUDE_FILES = {'Windows_self_test.json', '_wine_shim.py', '.gitignore', 'FILE_
                  'make_seed.py', 'make_cauk_seed.py'}
 # Остаются исходным текстом: заглушка запуска и самостоятельные утилиты обучения.
 KEEP_SOURCE = {'app_entry.py', 'train_lora.py', 'evaluate_lora.py'}
-KEEP_TOOLS = {'lora_pipeline_check.py'}
+KEEP_TOOLS = {'lora_pipeline_check.py', 'bootstrap_pip.py'}
+# Облегчённый runtime: части официального дистрибутива, которые программа не использует.
+# Остальные файлы runtime сверяются с SHA-256 поставки RC1 (без изменений).
+LEAN_REMOVE = (
+    'Lib/site-packages/PIL/_avif.cp313-win_amd64.pyd',  # AVIF: Pillow штатно отключает формат
+    'Lib/site-packages/PIL/_webp.cp313-win_amd64.pyd',  # WebP: то же
+    'Lib/site-packages/reportlab/fonts/',  # образцы шрифтов; отчёты используют resources/DejaVuSans.ttf
+    'Lib/ensurepip/_bundled/',  # pip загружается по требованию tools/bootstrap_pip.py
+    'Lib/idlelib/', 'Lib/venv/', 'Lib/pydoc_data/', 'NEWS.txt',
+    'tcl/tk8.6/demos/', 'tcl/tk8.6/images/', 'tcl/tcl8.6/tzdata/', 'tcl/nmake/',
+    'tcl/tcl86t.lib', 'tcl/tclstub86.lib', 'tcl/tk86t.lib', 'tcl/tkstub86.lib',
+    'tcl/tclConfig.sh', 'tcl/tclooConfig.sh', 'libs/',
+)
+
+
+def lean_removed(rel):
+    rel = rel[len('runtime/'):] if rel.startswith('runtime/') else rel
+    return any(rel == item or (item.endswith('/') and rel.startswith(item)) for item in LEAN_REMOVE)
 VENDOR_FILES = ('tools/license_tool.py', 'usb_license.py', 'nc_ed25519.py')
 FIXED_TIME = (2026, 10, 1, 12, 0, 0)
 
@@ -144,7 +162,14 @@ def main():
         generated.write_text(source.replace('BUILD_HASHES = {}', 'BUILD_HASHES = ' + json.dumps(hashes, indent=1))
                              .replace('BUILD_SOURCES = []', 'BUILD_SOURCES = ' + json.dumps(sources)), encoding='utf-8')
         compile_module(generated, stage / 'entry.pyc', 'entry.py')
-    shutil.copytree(runtime, stage / 'runtime', ignore=shutil.ignore_patterns('__pycache__'))
+    removed = 0
+    for path, source in sorted(actual.items()):
+        if lean_removed(path):
+            removed += 1
+            continue
+        target = stage / path
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source, target)
     manifest = []
     for path in sorted(p for p in stage.rglob('*') if p.is_file()):
         rel = str(path.relative_to(stage)).replace('\\', '/')
@@ -153,7 +178,8 @@ def main():
     archive = out / (args.name + '.zip')
     write_zip(archive, stage, [r['path'] for r in manifest] + ['FILE_SHA256.json'])
     summary = {'archive': archive.name, 'bytes': archive.stat().st_size, 'sha256': digest(archive),
-               'files': len(manifest), 'compiled_modules': len(protected) + 1, 'runtime_files': len(actual)}
+               'files': len(manifest), 'compiled_modules': len(protected) + 1, 'runtime_files': len(actual) - removed,
+               'runtime_files_removed_lean': removed}
     if args.vendor_key:
         kit = build_vendor_kit(out, args.vendor_key, args.name)
         summary['vendor_kit'] = {'archive': kit.name, 'bytes': kit.stat().st_size, 'sha256': digest(kit)}
