@@ -5,7 +5,8 @@
 1. Проверяет runtime по SHA-256 из манифеста предыдущей поставки (runtime не меняется
    и не подменяется Linux-библиотеками).
 2. Собирает папку NormaControl_OPO без служебных/локальных файлов, пишет FILE_SHA256.json.
-3. Создаёт две части архива, как в RC1: Part1 — программа и документы, Part2 — runtime.
+3. Создаёт две части архива примерно равного размера, как в RC1 (обе распаковываются в одну папку):
+   Part1 — программа, документы и начало runtime; Part2 — остальной runtime.
 """
 import argparse
 import hashlib
@@ -13,6 +14,7 @@ import json
 import shutil
 import sys
 import zipfile
+import zlib
 from pathlib import Path
 
 BASE = Path(__file__).resolve().parent.parent
@@ -66,8 +68,23 @@ def main():
     for path, source in sorted(actual.items()):
         manifest.append({'path': path, 'bytes': source.stat().st_size, 'sha256': expected[path]['sha256']})
     (stage / 'FILE_SHA256.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=1), encoding='utf-8')
-    parts = {out / (args.name + '_Part1.zip'): [r for r in manifest if not r['path'].startswith('runtime/')] + [{'path': 'FILE_SHA256.json'}],
-             out / (args.name + '_Part2.zip'): [r for r in manifest if r['path'].startswith('runtime/')]}
+    program = [r for r in manifest if not r['path'].startswith('runtime/')] + [{'path': 'FILE_SHA256.json'}]
+    runtime_rows = [r for r in manifest if r['path'].startswith('runtime/')]
+
+    def packed(row):
+        source = stage / row['path'] if not row['path'].startswith('runtime/') else actual[row['path']]
+        return len(zlib.compress(source.read_bytes(), 9))
+
+    sizes = {r['path']: packed(r) for r in program + runtime_rows}
+    half = sum(sizes.values()) / 2
+    first, second, filled = list(program), [], sum(sizes[r['path']] for r in program)
+    for row in runtime_rows:
+        if filled < half:
+            first.append(row)
+            filled += sizes[row['path']]
+        else:
+            second.append(row)
+    parts = {out / (args.name + '_Part1.zip'): first, out / (args.name + '_Part2.zip'): second}
     for archive_path, rows in parts.items():
         with zipfile.ZipFile(archive_path, 'w', zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
             for row in rows:

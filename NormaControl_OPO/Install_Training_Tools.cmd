@@ -5,11 +5,16 @@ echo Устанавливаются дополнительные библиот�
 echo PyTorch ставится в сборке с CUDA для видеокарт NVIDIA: обычный пакет PyPI для Windows работает только на CPU.
 "%~dp0runtime\python.exe" -I -X utf8 -m ensurepip
 if errorlevel 1 goto fail
-rem Сначала новейшая сборка CUDA 13.0, затем 12.8 и 12.6 (драйвер NVIDIA должен быть не старше сборки).
-for %%C in (cu130 cu128 cu126) do (
-  echo Попытка: PyTorch %%C
-  "%~dp0runtime\python.exe" -I -X utf8 -m pip install --upgrade "torch>=2.7,<3" --index-url https://download.pytorch.org/whl/%%C && goto torch_ok
-)
+rem Сначала новейшая сборка CUDA 13.0, затем 12.8 и 12.6.
+echo Попытка: PyTorch cu130
+"%~dp0runtime\python.exe" -I -X utf8 -m pip install --upgrade "torch>=2.7,<3" --index-url https://download.pytorch.org/whl/cu130
+if not errorlevel 1 goto torch_ok
+echo Попытка: PyTorch cu128
+"%~dp0runtime\python.exe" -I -X utf8 -m pip install --upgrade "torch>=2.7,<3" --index-url https://download.pytorch.org/whl/cu128
+if not errorlevel 1 goto torch_ok
+echo Попытка: PyTorch cu126
+"%~dp0runtime\python.exe" -I -X utf8 -m pip install --upgrade "torch>=2.7,<3" --index-url https://download.pytorch.org/whl/cu126
+if not errorlevel 1 goto torch_ok
 goto fail
 :torch_ok
 "%~dp0runtime\python.exe" -I -X utf8 -m pip install -r "%~dp0requirements-training.txt"

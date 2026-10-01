@@ -80,9 +80,14 @@
 - `runtime\python.exe -I -X utf8 -m ensurepip` во встроенном runtime: pip 26.2.1 установлен.
 - `pip install` колёс cp313 win_amd64 с PyPI во встроенный runtime: torch 2.14.1 (CPU-сборка PyPI), transformers 4.57.6, peft 0.21.1, safetensors 0.8.0, tokenizers 0.22.2 — установлены.
 - Запуск torch под Wine 9.0 невозможен: в Wine не реализована функция ucrtbase.crealf, которую вызывает torch для Windows. Это ограничение Wine, а не Windows; обучение на Win64-runtime проверяется только на настоящей Windows (`tools\lora_pipeline_check.py`).
-- CUDA-сборки PyTorch (download.pytorch.org) в этой среде недоступны (403); установщик пробует cu130 → cu128 → cu126 и печатает, видна ли CUDA.
+- CUDA-сборки PyTorch (download.pytorch.org) в этой среде недоступны (403); установщик пробует cu130 → cu128 → cu126 и печатает, видна ли CUDA. Логика попыток проверена в `wine cmd` на заглушках вместо pip (первоначальный вариант с `goto` внутри `for` под Wine продолжал цикл — заменён последовательными попытками).
+- Diagnostics_Windows.cmd выполнен через `wine cmd` из распакованного архива: Windows_self_test.json создан.
 
-## 6. Что сделать на целевой машине
+## 6. Проверка готового архива
+
+Архив собран tools/build_release.py: runtime сверен по SHA-256 с поставкой RC1 (2290 файлов, без изменений). Обе части распакованы в чистую папку: 2390 файлов совпадают с FILE_SHA256.json, лишних нет. Из распакованной папки под Wine: self-test (utf8_mode=true, FTS5, окно Tk, DPI awareness), NormaControl.exe --smoke-test (код 0; новая база 68 источников / 22 975 фрагментов, служебных надписей 0, integrity ok), приёмка 10 OK / 0 FAIL / 2 SKIP.
+
+## 7. Что сделать на целевой машине
 
 1. Diagnostics_Windows.cmd → Windows_self_test.json (ожидается utf8_mode=true, fts5=ok, tk_window=ok, GPU RTX A5000 с драйвером).
 2. Acceptance_Windows.cmd → отчёт acceptance\Acceptance_report_*.json/.txt.
