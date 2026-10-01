@@ -1,0 +1,21 @@
+[
+  {
+    "id": "usercopy-fnp534-20260720",
+    "title": "Пользовательская копия ФНП №534 — редакция не подтверждена",
+    "issuer": "Ростехнадзор (реквизиты в пользовательской копии)",
+    "number": "534",
+    "date": "2020-12-15",
+    "official_url": "https://publication.pravo.gov.ru/document/0001202012290079",
+    "status": "needs_revision_check",
+    "applicability": "Предварительный разбор нефтегазовых объектов; требуется сверка действующей официальной редакции и применимости.",
+    "summary": "Восстановлена пользовательская копия из ранее созданного файла. В документе 6091 абзац и 34 таблицы; редакция не указана, в конце обозначен вторичный источник. Совпадение с полным официальным текстом не подтверждено.",
+    "known_validity": "Не подтверждена. Запрещено считать копию актуальным сводным текстом автоматически.",
+    "verified_on": "2026-10-01",
+    "full_text_included": false,
+    "local_file": "regulations_texts/library_534.docx",
+    "content_kind": "user_copy",
+    "library_id": "libfile_c960e93469208191ac6ef87c600b7332",
+    "current_consolidation_verified": false,
+    "automatic_compliance_enabled": false
+  }
+]

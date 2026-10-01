@@ -1,0 +1,9 @@
+{
+  "tabs": 8,
+  "scenario": "save -> sources -> human decision -> local agent",
+  "errors": [],
+  "sources": 68,
+  "chunks": 23044,
+  "authorized_nd": 19,
+  "integrity": "ok"
+}

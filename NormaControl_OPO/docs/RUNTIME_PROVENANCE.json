@@ -1,0 +1,14 @@
+{
+  "python_version": "3.13.16",
+  "platform": "Windows x64",
+  "installer_url": "https://www.python.org/ftp/python/3.13.16/python-3.13.16-amd64.exe",
+  "installer_sha256": "fb4f9f5d438b2396da0086dc70b935c530cb578e37adc6d354f7ad2037fee83b",
+  "payload_hashes_verified_against_burn_manifest": true,
+  "included_components": [
+    "core",
+    "exe",
+    "lib",
+    "tcltk"
+  ],
+  "windows_execution_tested": false
+}

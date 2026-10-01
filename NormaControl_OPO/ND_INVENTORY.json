@@ -1,0 +1,219 @@
+{
+  "archive": "НД.rar",
+  "documents": [
+    {
+      "act_id": "LAW2395",
+      "title": "О недрах",
+      "original_filename": "Закон РФ от 21.02.1992 N 2395-1 (ред. от 08.03.2026) О недр.docx",
+      "local_file": "regulations_texts/ND/LAW2395.docx",
+      "revision_from_document": "08.03.2026",
+      "saved_on_from_document": "01.10.2026",
+      "sha256": "86d53739d6ded13191c93c460774e0e35851b28421d43f76be53b136d960bdd4",
+      "paragraph_text_chars": 306456,
+      "indexed_chunks": 1237
+    },
+    {
+      "act_id": "PP1363",
+      "title": "О регистрации опасных производственных объектов в государственном реестре опасных производственных объектов",
+      "original_filename": "Постановление Правительства РФ от 03.09.2025 N 1363 О регис(3).docx",
+      "local_file": "regulations_texts/ND/PP1363.docx",
+      "revision_from_document": "",
+      "saved_on_from_document": "01.10.2026",
+      "sha256": "07ebbe984d99ab6abea0a88f996b30deaa96dee9a4ccc395d9d73574ee3ad4d5",
+      "paragraph_text_chars": 201775,
+      "indexed_chunks": 293
+    },
+    {
+      "act_id": "PP1661",
+      "title": "Об утверждении Положения о лицензировании эксплуатации взрывопожароопасных и химически опасных производственных объектов I, II и III классов опасности",
+      "original_filename": "Постановление Правительства РФ от 12.10.2020 N 1661 (ред. от.docx",
+      "local_file": "regulations_texts/ND/PP1661.docx",
+      "revision_from_document": "07.03.2026",
+      "saved_on_from_document": "01.10.2026",
+      "sha256": "4a09f1dd1b76353ecaf05594a84b0b36f7f3dae1fa4b7f0ff7ffda2a194ee64b",
+      "paragraph_text_chars": 32200,
+      "indexed_chunks": 143
+    },
+    {
+      "act_id": "PP13",
+      "title": "Об аттестации в области промышленной безопасности, по вопросам безопасности гидротехнических сооружений, безопасности в сфере электроэнергетики",
+      "original_filename": "Постановление Правительства РФ от 13.01.2023 N 13 (ред. от 2(2).docx",
+      "local_file": "regulations_texts/ND/PP13.docx",
+      "revision_from_document": "29.09.2025",
+      "saved_on_from_document": "01.10.2026",
+      "sha256": "28fc13dd0cb1a46bca6c50a54051c50d9c8de9986f9d1409659005cda42a6deb",
+      "paragraph_text_chars": 34560,
+      "indexed_chunks": 155
+    },
+    {
+      "act_id": "PP1437",
+      "title": "Об утверждении Положения о разработке планов мероприятий по локализации и ликвидации последствий аварий на опасных производственных объектах",
+      "original_filename": "Постановление Правительства РФ от 15.09.2020 N 1437 (ред. от.docx",
+      "local_file": "regulations_texts/ND/PP1437.docx",
+      "revision_from_document": "05.08.2026",
+      "saved_on_from_document": "01.10.2026",
+      "sha256": "984e757e94238c939a2f31a698ce68fcb46ad5c529a3880ce98b2a1976593efc",
+      "paragraph_text_chars": 7411,
+      "indexed_chunks": 60
+    },
+    {
+      "act_id": "PP1243",
+      "title": "Об утверждении требований к документационному обеспечению систем управления промышленной безопасностью",
+      "original_filename": "Постановление Правительства РФ от 17.08.2020 N 1243 (ред. от.docx",
+      "local_file": "regulations_texts/ND/PP1243.docx",
+      "revision_from_document": "30.06.2021",
+      "saved_on_from_document": "01.10.2026",
+      "sha256": "ed05243e26f2c3b76296ab3c6ce22e25b8431ad40d2dc3dc6c9ac56e42e37492",
+      "paragraph_text_chars": 7762,
+      "indexed_chunks": 61
+    },
+    {
+      "act_id": "PP2168",
+      "title": "Об организации и осуществлении производственного контроля за соблюдением требований промышленной безопасности",
+      "original_filename": "Постановление Правительства РФ от 18.12.2020 N 2168 (ред. от.docx",
+      "local_file": "regulations_texts/ND/PP2168.docx",
+      "revision_from_document": "29.07.2023",
+      "saved_on_from_document": "01.10.2026",
+      "sha256": "a8ed00dbcfbb3db521a1315128f3d9871fa8b4814a7cfcae9fe75c8769263509",
+      "paragraph_text_chars": 21040,
+      "indexed_chunks": 143
+    },
+    {
+      "act_id": "RTN503",
+      "title": "Порядок проведения технического расследования причин аварий, инцидентов и случаев утраты взрывчатых материалов промышленного назначения",
+      "original_filename": "Приказ Ростехнадзора от 08.12.2020 N 503 (ред. от 16.02.2026.docx",
+      "local_file": "regulations_texts/ND/RTN503.docx",
+      "revision_from_document": "16.02.2026",
+      "saved_on_from_document": "01.10.2026",
+      "sha256": "fdc5604792544e13630b0611608f893da6222203572ea8506278d744f3b86922",
+      "paragraph_text_chars": 56724,
+      "indexed_chunks": 488
+    },
+    {
+      "act_id": "FNP528",
+      "title": "Правила безопасного ведения газоопасных, огневых и ремонтных работ",
+      "original_filename": "Приказ Ростехнадзора от 15.12.2020 N 528 (ред. от 03.03.2026.docx",
+      "local_file": "regulations_texts/ND/FNP528.docx",
+      "revision_from_document": "03.03.2026",
+      "saved_on_from_document": "01.10.2026",
+      "sha256": "677a303970d8e10df850c9785f7e2ba9653c0715ed1709af3734e04e687fd431",
+      "paragraph_text_chars": 108282,
+      "indexed_chunks": 496
+    },
+    {
+      "act_id": "FNP529",
+      "title": "Правила промышленной безопасности складов нефти и нефтепродуктов",
+      "original_filename": "Приказ Ростехнадзора от 15.12.2020 N 529 (ред. от 03.03.2026.docx",
+      "local_file": "regulations_texts/ND/FNP529.docx",
+      "revision_from_document": "03.03.2026",
+      "saved_on_from_document": "01.10.2026",
+      "sha256": "a3846e6810685b46573881a54b63936eed042f0dd0027055bd66e8b938729224",
+      "paragraph_text_chars": 93510,
+      "indexed_chunks": 500
+    },
+    {
+      "act_id": "FNP533",
+      "title": "Общие правила взрывобезопасности для взрывопожароопасных химических, нефтехимических и нефтеперерабатывающих производств",
+      "original_filename": "Приказ Ростехнадзора от 15.12.2020 N 533 (ред. от 03.03.2026.docx",
+      "local_file": "regulations_texts/ND/FNP533.docx",
+      "revision_from_document": "03.03.2026",
+      "saved_on_from_document": "01.10.2026",
+      "sha256": "f15e2c87ed2d6c3add00129ca9068699342e63799c63206bceb4a978cfc2544f",
+      "paragraph_text_chars": 208575,
+      "indexed_chunks": 1004
+    },
+    {
+      "act_id": "FNP534",
+      "title": "Правила безопасности в нефтяной и газовой промышленности",
+      "original_filename": "Приказ Ростехнадзора от 15.12.2020 N 534 (ред. от 03.03.2026.docx",
+      "local_file": "regulations_texts/ND/FNP534.docx",
+      "revision_from_document": "03.03.2026",
+      "saved_on_from_document": "01.10.2026",
+      "sha256": "c52b32e6390a90fe49eb09d835e7bef601d2c12c99ad9a6163911e057ac920fa",
+      "paragraph_text_chars": 870561,
+      "indexed_chunks": 5717
+    },
+    {
+      "act_id": "FNP536",
+      "title": "Правила промышленной безопасности при использовании оборудования, работающего под избыточным давлением",
+      "original_filename": "Приказ Ростехнадзора от 15.12.2020 N 536 Об утверждении фед.docx",
+      "local_file": "regulations_texts/ND/FNP536.docx",
+      "revision_from_document": "",
+      "saved_on_from_document": "01.10.2026",
+      "sha256": "67a7963399b16927290e66849eb35352b1864014f45e5a5e9a4d8f6e9fd3854d",
+      "paragraph_text_chars": 615365,
+      "indexed_chunks": 3153
+    },
+    {
+      "act_id": "FNP420",
+      "title": "Правила проведения экспертизы промышленной безопасности",
+      "original_filename": "Приказ Ростехнадзора от 20.10.2020 N 420 (ред. от 04.03.2026.docx",
+      "local_file": "regulations_texts/ND/FNP420.docx",
+      "revision_from_document": "04.03.2026",
+      "saved_on_from_document": "01.10.2026",
+      "sha256": "4c2efa9300fd33ea9c1399906753bedabdccc7505ff9f89a9fb65f9e5ab5ecb1",
+      "paragraph_text_chars": 29207,
+      "indexed_chunks": 205
+    },
+    {
+      "act_id": "FNP444",
+      "title": "Правила безопасной эксплуатации технологических трубопроводов",
+      "original_filename": "Приказ Ростехнадзора от 21.12.2021 N 444 Об утверждении фед.docx",
+      "local_file": "regulations_texts/ND/FNP444.docx",
+      "revision_from_document": "",
+      "saved_on_from_document": "01.10.2026",
+      "sha256": "42477c8f1866ae52cf49e8425713778ea64043f1de464e6d4adb1758c76a79dd",
+      "paragraph_text_chars": 124530,
+      "indexed_chunks": 630
+    },
+    {
+      "act_id": "FNP461",
+      "title": "Правила безопасности опасных производственных объектов, на которых используются подъемные сооружения",
+      "original_filename": "Приказ Ростехнадзора от 26.11.2020 N 461 (ред. от 16.04.2026.docx",
+      "local_file": "regulations_texts/ND/FNP461.docx",
+      "revision_from_document": "16.04.2026",
+      "saved_on_from_document": "01.10.2026",
+      "sha256": "5ab5e83741a53ae37dc4b247e18bc162401fc7583f38de765c04198ceb92eed6",
+      "paragraph_text_chars": 216622,
+      "indexed_chunks": 1323
+    },
+    {
+      "act_id": "FZ99",
+      "title": "О лицензировании отдельных видов деятельности",
+      "original_filename": "Федеральный закон от 04.05.2011 N 99-ФЗ (ред. от 04.08.2026).docx",
+      "local_file": "regulations_texts/ND/FZ99.docx",
+      "revision_from_document": "04.08.2026",
+      "saved_on_from_document": "01.10.2026",
+      "sha256": "0794f39f7cfab49c35154d1ff4b6b0519941a443b2719f37ab69fed0dea0173d",
+      "paragraph_text_chars": 202912,
+      "indexed_chunks": 814
+    },
+    {
+      "act_id": "FZ116",
+      "title": "О промышленной безопасности опасных производственных объектов",
+      "original_filename": "Федеральный закон от 21.07.1997 N 116-ФЗ (ред. от 31.07.2025.docx",
+      "local_file": "regulations_texts/ND/FZ116.docx",
+      "revision_from_document": "31.07.2025",
+      "saved_on_from_document": "01.10.2026",
+      "sha256": "02946734f2379ca84729a66c9e3559bc2b9067f9f4f77f2c406d5fa400a47417",
+      "paragraph_text_chars": 95109,
+      "indexed_chunks": 518
+    },
+    {
+      "act_id": "FZ225",
+      "title": "Об обязательном страховании гражданской ответственности владельца опасного объекта",
+      "original_filename": "Федеральный закон от 27.07.2010 N 225-ФЗ (ред. от 29.12.2022.docx",
+      "local_file": "regulations_texts/ND/FZ225.docx",
+      "revision_from_document": "29.12.2022",
+      "saved_on_from_document": "01.10.2026",
+      "sha256": "d1e8bbe71aad71545fa564310be65c33371468f261b05684547441e00c325cde",
+      "paragraph_text_chars": 81346,
+      "indexed_chunks": 430
+    }
+  ],
+  "count": 19,
+  "legal_currentness_confirmed": false,
+  "excluded_by_user": [
+    "Приказ Ростехнадзора №517 от 11.12.2020"
+  ]
+}

@@ -1,0 +1,18 @@
+# Windows runtime (официальный Python 3.13.16 + wheels) поставляется в архиве Part2;
+# состав и SHA-256: docs/RUNTIME_PROVENANCE.json, docs/WINDOWS_DEPENDENCIES.json.
+runtime/
+# Данные предприятия не публикуются в публичном репозитории; они есть в архиве поставки.
+registry.json
+cauk_questions.json
+make_seed.py
+make_cauk_seed.py
+sources/
+examples/
+docs/GUI_situations.png
+docs/screenshots/
+# Локальные артефакты запуска и проверки
+Windows_self_test.json
+Acceptance_report*
+__pycache__/
+*.pyc
+_wine_shim.py
