@@ -14,6 +14,8 @@ from datetime import date, datetime
 from pathlib import Path
 from xml.etree import ElementTree as ET
 
+from service_text import REMOVED_MARK, clean_text
+
 MAX_FILE = 32 * 1024 * 1024
 MAX_PAGES = 150
 MAX_TEXT = 2000000
@@ -96,7 +98,7 @@ class KnowledgeBase:
             raise ValueError('Некорректный язык OCR.')
         d = self.diagnostics()
         if not d['tesseract']:
-            raise ValueError('Tesseract не установлен.')
+            raise ValueError('Tesseract не установлен: OCR ({}) недоступен. Установите Tesseract с языками rus и eng, см. Install_Document_Tools.cmd.'.format(lang))
         missing = set(lang.split('+')) - set(d['ocr_languages'])
         if missing:
             raise ValueError('Не установлены языки OCR: ' + ', '.join(sorted(missing)))
@@ -194,8 +196,11 @@ class KnowledgeBase:
             raise ValueError('Неподдерживаемый формат: ' + suffix)
         chunks = []
         total = 0
+        service_removed = 0
         for location, page, text in blocks:
-            text = text.replace('\x00', '').strip()
+            text, removed = clean_text(text.replace('\x00', ''))
+            service_removed += removed
+            text = text.strip()
             if not text:
                 continue
             remaining = MAX_TEXT - total
@@ -209,6 +214,8 @@ class KnowledgeBase:
             total += len(text)
             if total >= MAX_TEXT:
                 break
+        if service_removed:
+            notes.append('Удалены служебные надписи справочных правовых систем: {} (плашки, колонтитулы, примечания редакции системы). Исходный файл не изменён.'.format(service_removed))
         if not chunks:
             raise ValueError('Текст не извлечён. ' + '; '.join(notes))
         return chunks, notes
@@ -244,10 +251,7 @@ class KnowledgeBase:
             chunks, notes = self._extract(self.root / 'files' / stored, force_ocr, ocr_lang)
             status = 'partial' if any('ЧАСТИЧНО' in n for n in notes) else 'indexed'
             with self._db() as db:
-                self._clear(db, sid)
-                for location, page, text in chunks:
-                    cur = db.execute('INSERT INTO kb_chunks(source_id,location,page,text) VALUES(?,?,?,?)', (sid, location, page, text))
-                    db.execute('INSERT INTO kb_fts(rowid,text) VALUES(?,?)', (cur.lastrowid, text))
+                self._store_chunks(db, sid, chunks)
                 db.execute('UPDATE kb_sources SET status=?,extraction_notes=?,updated=? WHERE id=?', (status, '; '.join(notes), now, sid))
         except Exception as exc:
             with self._db() as db:
@@ -255,6 +259,116 @@ class KnowledgeBase:
                 db.execute("UPDATE kb_sources SET status='error',extraction_notes=?,updated=? WHERE id=?", (str(exc)[:3000], now, sid))
             raise ValueError('Источник #{} не проиндексирован: {}'.format(sid, str(exc))) from None
         return sid
+
+    @staticmethod
+    def _referenced_chunks(db, sid):
+        if not db.execute("SELECT 1 FROM sqlite_master WHERE name='nc_requirements'").fetchone():
+            return set()
+        return {r[0] for r in db.execute('SELECT chunk_id FROM nc_requirements WHERE source_id=?', (sid,))}
+
+    def _store_chunks(self, db, sid, chunks):
+        """Записать фрагменты, сохраняя id прежних мест: ссылки [К-Ф] остаются верными.
+
+        Место, исчезнувшее из нового текста, удаляется из поиска; если на него
+        ссылается проверенное требование, строка остаётся с пометкой."""
+        old = {r['location']: r['id'] for r in db.execute('SELECT id,location FROM kb_chunks WHERE source_id=?', (sid,))}
+        referenced = self._referenced_chunks(db, sid)
+        seen = set()
+        stats = {'updated': 0, 'inserted': 0, 'removed': 0, 'kept_referenced': 0}
+        for location, page, text in chunks:
+            seen.add(location)
+            cid = old.get(location)
+            if cid is None:
+                cur = db.execute('INSERT INTO kb_chunks(source_id,location,page,text) VALUES(?,?,?,?)', (sid, location, page, text))
+                db.execute('INSERT INTO kb_fts(rowid,text) VALUES(?,?)', (cur.lastrowid, text))
+                stats['inserted'] += 1
+            else:
+                db.execute('UPDATE kb_chunks SET page=?,text=? WHERE id=?', (page, text, cid))
+                db.execute('DELETE FROM kb_fts WHERE rowid=?', (cid,))
+                db.execute('INSERT INTO kb_fts(rowid,text) VALUES(?,?)', (cid, text))
+                stats['updated'] += 1
+        for location, cid in old.items():
+            if location in seen:
+                continue
+            db.execute('DELETE FROM kb_fts WHERE rowid=?', (cid,))
+            if cid in referenced:
+                db.execute('UPDATE kb_chunks SET text=? WHERE id=?', (REMOVED_MARK, cid))
+                stats['kept_referenced'] += 1
+            else:
+                db.execute('DELETE FROM kb_chunks WHERE id=?', (cid,))
+                stats['removed'] += 1
+        return stats
+
+    def replace_source_content(self, source_id, path, edition=None, title=None, note=''):
+        """Заменить файл источника новой версией (например, очищенной копией комплекта).
+
+        Флаги проверки/активности и id сохранившихся фрагментов не меняются."""
+        path = Path(path).resolve()
+        if not path.is_file() or path.stat().st_size > MAX_FILE:
+            raise ValueError('Файл отсутствует или превышает 32 МБ.')
+        with self._db() as db:
+            row = db.execute('SELECT * FROM kb_sources WHERE id=?', (source_id,)).fetchone()
+        if row is None:
+            raise ValueError('Источник не найден.')
+        digest = hashlib.sha256(path.read_bytes()).hexdigest()
+        stored = 'kb_' + uuid.uuid4().hex + path.suffix.lower()
+        target = self.root / 'files' / stored
+        shutil.copyfile(path, target)
+        try:
+            chunks, notes = self._extract(target, False, 'rus+eng')
+            if note:
+                notes.append(note)
+            status = 'partial' if any('ЧАСТИЧНО' in n for n in notes) else 'indexed'
+            with self._db() as db:
+                stats = self._store_chunks(db, source_id, chunks)
+                db.execute('UPDATE kb_sources SET sha256=?,stored_name=?,status=?,extraction_notes=?,edition=COALESCE(?,edition),title=COALESCE(?,title),updated=? WHERE id=?',
+                           (digest, stored, status, '; '.join(notes), edition, title, datetime.now().isoformat(timespec='seconds'), source_id))
+        except Exception:
+            target.unlink(missing_ok=True)
+            raise
+        previous = (self.root / 'files' / row['stored_name']).resolve()
+        if previous != target and previous.parent == (self.root / 'files').resolve():
+            previous.unlink(missing_ok=True)
+        return stats
+
+    def clean_indexed_service_text(self):
+        """Однократно убрать служебные надписи из уже проиндексированных фрагментов.
+
+        Исходные файлы пользователя не изменяются; id фрагментов сохраняются."""
+        with self._db() as db:
+            db.execute('CREATE TABLE IF NOT EXISTS kb_maintenance(name TEXT PRIMARY KEY, done TEXT NOT NULL, details TEXT NOT NULL)')
+            if db.execute("SELECT 1 FROM kb_maintenance WHERE name='service_text_v1'").fetchone():
+                return None
+            result = {'sources': 0, 'chunks_changed': 0, 'chunks_removed': 0, 'kept_referenced': 0}
+            for source in db.execute('SELECT id FROM kb_sources').fetchall():
+                sid = source['id']
+                referenced = self._referenced_chunks(db, sid)
+                touched = 0
+                for chunk in db.execute('SELECT id,text FROM kb_chunks WHERE source_id=?', (sid,)).fetchall():
+                    if chunk['text'] == REMOVED_MARK:
+                        continue
+                    cleaned, removed = clean_text(chunk['text'])
+                    if not removed:
+                        continue
+                    touched += removed
+                    db.execute('DELETE FROM kb_fts WHERE rowid=?', (chunk['id'],))
+                    if cleaned.strip():
+                        db.execute('UPDATE kb_chunks SET text=? WHERE id=?', (cleaned.strip(), chunk['id']))
+                        db.execute('INSERT INTO kb_fts(rowid,text) VALUES(?,?)', (chunk['id'], cleaned.strip()))
+                        result['chunks_changed'] += 1
+                    elif chunk['id'] in referenced:
+                        db.execute('UPDATE kb_chunks SET text=? WHERE id=?', (REMOVED_MARK, chunk['id']))
+                        result['kept_referenced'] += 1
+                    else:
+                        db.execute('DELETE FROM kb_chunks WHERE id=?', (chunk['id'],))
+                        result['chunks_removed'] += 1
+                if touched:
+                    result['sources'] += 1
+                    db.execute("UPDATE kb_sources SET extraction_notes=extraction_notes || ?, updated=? WHERE id=?",
+                               ('; Из индекса удалены служебные надписи справочных правовых систем: {}. Исходный файл не изменён.'.format(touched),
+                                datetime.now().isoformat(timespec='seconds'), sid))
+            db.execute('INSERT INTO kb_maintenance VALUES(?,?,?)', ('service_text_v1', datetime.now().isoformat(timespec='seconds'), json.dumps(result, ensure_ascii=False)))
+        return result
 
     @staticmethod
     def _clear(db, sid):

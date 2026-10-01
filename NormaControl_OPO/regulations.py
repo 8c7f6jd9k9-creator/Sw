@@ -102,6 +102,52 @@ class NormativeCatalog:
                     db.execute('UPDATE kb_sources SET retrieval_authorized=1 WHERE id=?',(sid,))
                     db.execute('INSERT INTO nc_corpus_permissions VALUES(?,?)',(rec['id'],sid))
 
+    @staticmethod
+    def _card_text(rec):
+        lines = [DISCLAIMER, 'Наименование: ' + rec['title']]
+        labels = {'issuer':'Орган', 'number':'Номер', 'date':'Дата', 'official_url':'Официальная ссылка (не загружена)', 'status':'Заявленный статус записи', 'applicability':'Применимость из перечня', 'summary':'Описание из перечня', 'known_validity':'Сведения о сроке из перечня (не проверены)', 'verification_note':'Примечания проверки', 'verification_notes':'Дополнительные примечания проверки', 'verified_on':'Дата проверки записи составителем'}
+        for key, label in labels.items():
+            lines.append(label + ': ' + str(rec.get(key, 'не указано')))
+        return '\n'.join(lines)
+
+    @staticmethod
+    def _user_copy_provenance(rec):
+        return ('Непроверенная пользовательская копия; идентификатор предоставленного файла: {}. Совпадение текста с официальным оригиналом и действующая редакция не подтверждены.'.format(rec.get('library_id','не указан')) +
+                (' Исходное имя: ' + rec['original_filename'] if rec.get('original_filename') else '') +
+                (' ' + rec['verification_note'] if rec.get('verification_note') else '') +
+                (' ' + rec['service_text_removed'] if rec.get('service_text_removed') else ''))
+
+    def _refresh_card(self, act_id, rec, source_id):
+        # Карточка создаётся программой: при изменении перечня текст обновляется,
+        # отметки пользователя (проверка, активность) и id фрагментов сохраняются.
+        text = self._card_text(rec)
+        try:
+            if self.kb.open_path(source_id).read_text(encoding='utf-8', errors='replace') == text:
+                return False
+        except ValueError:
+            pass  # файл карточки утрачен: создаётся заново
+        except OSError:
+            return False
+        with tempfile.TemporaryDirectory(prefix='promcontrol-card-') as tmp:
+            path = Path(tmp) / (re.sub(r'[^A-Za-z0-9_-]', '_', act_id) + '.txt')
+            path.write_text(text, encoding='utf-8')
+            self.kb.replace_source_content(source_id, path, title='КАРТОЧКА НПА — ' + rec['title'])
+        return True
+
+    def _upgrade_bundled_text(self, rec, source_id, candidate):
+        """Прежняя копия из комплекта → очищенная копия того же документа."""
+        source = next((s for s in self.kb.sources() if s['id'] == source_id), None)
+        if source is None or not rec.get('original_sha256') or source['sha256'] != rec['original_sha256']:
+            return False
+        if hashlib.sha256(candidate.read_bytes()).hexdigest() != rec.get('sha256'):
+            raise ValueError('SHA256 очищенного файла не совпадает с манифестом.')
+        edition = rec['edition_from_document'] if rec.get('edition_from_document') and source['edition'] == rec.get('legacy_edition') else None
+        self.kb.replace_source_content(source_id, candidate, edition=edition, note=rec.get('service_text_removed', ''))
+        if rec.get('content_kind') == 'user_copy':
+            with self._db() as db:
+                db.execute('UPDATE normative_catalog SET provenance=? WHERE act_id=?', (self._user_copy_provenance(rec), rec['id']))
+        return True
+
     def seed(self):
         manifests, errors = self._manifests()
         with self._db() as db:
@@ -111,7 +157,7 @@ class NormativeCatalog:
                     for sid in row:
                         if sid is not None:
                             db.execute('UPDATE kb_sources SET active=0 WHERE id=?',(sid,))
-        created, texts = 0, 0
+        created, texts, texts_upgraded, cards_refreshed = 0, 0, 0, 0
         for act_id, rec in manifests.items():
             with self._db() as db:
                 row = db.execute('SELECT * FROM normative_catalog WHERE act_id=?', (act_id,)).fetchone()
@@ -123,18 +169,21 @@ class NormativeCatalog:
                     db.execute('UPDATE normative_catalog SET record_json=? WHERE act_id=?', (json.dumps(rec, ensure_ascii=False), act_id))
             try:
                 if not row or row['source_id'] is None:
-                    lines = [DISCLAIMER, 'Наименование: ' + rec['title']]
-                    labels = {'issuer':'Орган', 'number':'Номер', 'date':'Дата', 'official_url':'Официальная ссылка (не загружена)', 'status':'Заявленный статус записи', 'applicability':'Применимость из перечня', 'summary':'Описание из перечня', 'known_validity':'Сведения о сроке из перечня (не проверены)', 'verification_note':'Примечания проверки', 'verification_notes':'Дополнительные примечания проверки', 'verified_on':'Дата проверки записи составителем'}
-                    for key, label in labels.items():
-                        lines.append(label + ': ' + str(rec.get(key, 'не указано')))
                     with tempfile.TemporaryDirectory(prefix='promcontrol-card-') as tmp:
                         path = Path(tmp) / (re.sub(r'[^A-Za-z0-9_-]', '_', act_id) + '.txt')
-                        path.write_text('\n'.join(lines), encoding='utf-8')
+                        path.write_text(self._card_text(rec), encoding='utf-8')
                         sid = self.kb.import_file(path, title='КАРТОЧКА НПА — ' + rec['title'], source_url=rec.get('official_url', ''), edition=CARD_EDITION, reviewed=False)
                     with self._db() as db:
                         db.execute('UPDATE normative_catalog SET source_id=? WHERE act_id=?', (sid, act_id))
+                elif self._refresh_card(act_id, rec, row['source_id']):
+                    cards_refreshed += 1
                 with self._db() as db:
                     state = db.execute('SELECT * FROM normative_catalog WHERE act_id=?', (act_id,)).fetchone()
+                if state['imported_text_source_id'] is not None and rec.get('original_sha256') and rec.get('local_file'):
+                    supplied = (BASE / rec['local_file']).resolve()
+                    if supplied.is_relative_to((BASE / 'regulations_texts').resolve()) and supplied.is_file():
+                        if self._upgrade_bundled_text(rec, state['imported_text_source_id'], supplied):
+                            texts_upgraded += 1
                 if state['imported_text_source_id'] is None and re.fullmatch(r'[A-Za-z0-9_-]+', act_id):
                     candidates = [BASE / 'regulations_texts' / (act_id + ext) for ext in ('.txt', '.pdf', '.docx')]
                     if rec.get('local_file'):
@@ -156,7 +205,7 @@ class NormativeCatalog:
                         sid = self.kb.import_file(candidate, title=prefix + rec['title'], source_url=source_url, edition=edition, reviewed=False)
                         source = next(s for s in self.kb.sources() if s['id'] == sid)
                         with self._db() as db:
-                            provenance = 'Непроверенная пользовательская копия; идентификатор предоставленного файла: {}. Совпадение текста с официальным оригиналом и действующая редакция не подтверждены.'.format(rec.get('library_id','не указан')) + (' Исходное имя: ' + rec['original_filename'] if rec.get('original_filename') else '') + (' ' + rec['verification_note'] if rec.get('verification_note') else '') if is_user_copy else 'Локальный файл из regulations_texts; полнота и происхождение требуют проверки пользователем.'
+                            provenance = self._user_copy_provenance(rec) if is_user_copy else 'Локальный файл из regulations_texts; полнота и происхождение требуют проверки пользователем.'
                             status = 'user_copy_indexed' if is_user_copy else 'local_material_indexed'
                             if is_official:
                                 provenance = 'Официальный файл из комплекта, полученный {} с {}. SHA256: {}. Исходная публикация; действующая сводная редакция не подтверждена. Извлечение: {}. {}'.format(rec.get('downloaded_on','дата не указана'), source_url, source['sha256'], source['status'], source['extraction_notes'])
@@ -171,7 +220,10 @@ class NormativeCatalog:
                         db.execute("UPDATE normative_catalog SET last_error=?,local_status='official_file_error' WHERE act_id=?", (message,act_id))
                     else:
                         db.execute('UPDATE normative_catalog SET last_error=? WHERE act_id=?', (message, act_id))
-        return {'count': len(manifests), 'created': created, 'local_texts_imported': texts, 'errors': errors}
+        service_text = self.kb.clean_indexed_service_text()
+        return {'count': len(manifests), 'created': created, 'local_texts_imported': texts,
+                'local_texts_upgraded': texts_upgraded, 'cards_refreshed': cards_refreshed,
+                'service_text_cleanup': service_text, 'errors': errors}
 
     def records(self):
         manifests, _ = self._manifests()

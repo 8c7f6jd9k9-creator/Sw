@@ -33,7 +33,7 @@ class KnowledgeTests(unittest.TestCase):
     def image(self):
         image = Image.new('RGB', (1400, 300), 'white')
         draw = ImageDraw.Draw(image)
-        font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf', 55)
+        font = ImageFont.truetype(str(BASE / 'resources' / 'DejaVuSans.ttf'), 55)  # шрифт комплекта: есть и на Windows
         draw.text((50, 80), 'PIPELINE SAFETY CHECK 2026', font=font, fill='black')
         path = self.root / 'scan.png'
         image.save(path)

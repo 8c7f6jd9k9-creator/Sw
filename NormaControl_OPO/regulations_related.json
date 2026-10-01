@@ -16,10 +16,6 @@
     "content_kind": "official_publication",
     "full_text_included": false,
     "current_consolidation_verified": false,
-    "source_refs": [
-      "turn28view0",
-      "turn33view0"
-    ],
     "verification_notes": "Официальная карточка и PDF открыты. PDF содержит исходный регламент; наличие файла не подтверждает включение перечисленных изменений и полноту редакции2026.",
     "file_url": "https://eec.eaeunion.org/upload/medialibrary/536/P_823_1.pdf",
     "local_file": "regulations_texts/tr-ts-010-2011.pdf",
@@ -44,9 +40,6 @@
     "content_kind": "metadata_and_original_summary",
     "full_text_included": false,
     "current_consolidation_verified": false,
-    "source_refs": [
-      "turn28view1"
-    ],
     "verification_notes": "Карточка ЕЭК открыта. Переход к файлу вернул ошибку инструмента; сводный текст не получен."
   },
   {
@@ -66,10 +59,6 @@
     "content_kind": "official_publication",
     "full_text_included": false,
     "current_consolidation_verified": false,
-    "source_refs": [
-      "turn28view2",
-      "turn35view0"
-    ],
     "verification_notes": "Карточка и PDF открыты. Несмотря на заголовок метаданных PDF «ПРОЕКТ», первая страница содержит утверждение решениемКТС18.10.2011№825. Сводная редакция2026 не подтверждена.",
     "file_url": "https://eec.eaeunion.org/upload/medialibrary/889/P_825_1.pdf",
     "local_file": "regulations_texts/tr-ts-012-2011.pdf",
@@ -94,9 +83,6 @@
     "content_kind": "metadata_and_original_summary",
     "full_text_included": false,
     "current_consolidation_verified": false,
-    "source_refs": [
-      "turn33view5"
-    ],
     "verification_notes": "Официальный перечень МЧС открыт и подтверждает реквизиты и ссылку. Открытие связанного текста на pravo.gov.ru вернуло Internal Error."
   },
   {
@@ -116,9 +102,6 @@
     "content_kind": "metadata_and_original_summary",
     "full_text_included": false,
     "current_consolidation_verified": false,
-    "source_refs": [
-      "turn33view5"
-    ],
     "verification_notes": "Карточка регионального МЧС также содержит старую редакцию2015; её нельзя выдавать за действующую2026. Официальный перечень открыт; pravo.gov.ru недоступен инструменту."
   },
   {
@@ -138,9 +121,6 @@
     "content_kind": "metadata_and_original_summary",
     "full_text_included": false,
     "current_consolidation_verified": false,
-    "source_refs": [
-      "turn33view5"
-    ],
     "verification_notes": "Проверен официальный перечень МЧС; первичный актуализированный текст и изменения по срокам не получены. Не использовать автоматически исходный срок или старые правила390."
   },
   {
@@ -160,9 +140,6 @@
     "content_kind": "metadata_and_original_summary",
     "full_text_included": false,
     "current_consolidation_verified": false,
-    "source_refs": [
-      "turn30view0"
-    ],
     "verification_notes": "Проверена идентификация документа на официальном ресурсе; действующая сводная редакция на 01.10.2026 не подтверждена."
   },
   {
@@ -182,9 +159,6 @@
     "content_kind": "metadata_and_original_summary",
     "full_text_included": false,
     "current_consolidation_verified": false,
-    "source_refs": [
-      "turn30view1"
-    ],
     "verification_notes": "Проверена идентификация документа на официальном ресурсе; действующая сводная редакция на 01.10.2026 не подтверждена."
   },
   {
@@ -204,9 +178,6 @@
     "content_kind": "metadata_and_original_summary",
     "full_text_included": false,
     "current_consolidation_verified": false,
-    "source_refs": [
-      "turn30view2"
-    ],
     "verification_notes": "Проверена идентификация документа на официальном ресурсе; действующая сводная редакция на 01.10.2026 не подтверждена."
   },
   {
@@ -226,11 +197,6 @@
     "content_kind": "metadata_and_original_summary",
     "full_text_included": false,
     "current_consolidation_verified": false,
-    "source_refs": [
-      "turn38search8",
-      "turn21search0",
-      "turn42search4"
-    ],
     "verification_notes": "Дата/номер/название подтверждены индексированной официальной страницей Росприроднадзора и официальным изменяющим законом. Открытие первичного текста и страниц подтверждения завершилось ошибкой; статус требует проверки редакции. Не использовать эту справку как текст закона."
   },
   {
@@ -250,9 +216,6 @@
     "content_kind": "metadata_and_original_summary",
     "full_text_included": false,
     "current_consolidation_verified": false,
-    "source_refs": [
-      "turn42view0"
-    ],
     "verification_notes": "Проверена идентификация документа на официальном ресурсе; действующая сводная редакция на 01.10.2026 не подтверждена."
   },
   {
@@ -272,9 +235,6 @@
     "content_kind": "metadata_and_original_summary",
     "full_text_included": false,
     "current_consolidation_verified": false,
-    "source_refs": [
-      "turn42view1"
-    ],
     "verification_notes": "Проверена идентификация документа на официальном ресурсе; действующая сводная редакция на 01.10.2026 не подтверждена."
   },
   {
@@ -294,10 +254,6 @@
     "content_kind": "metadata_and_unverified_attachment",
     "full_text_included": false,
     "current_consolidation_verified": false,
-    "source_refs": [
-      "turn30view6",
-      "turn26search3"
-    ],
     "verification_notes": "Официальная исходная карточка открыта, приложение доступно по указанной в ней ссылке. Документ о продлении найден на официальном портале, но первичный текст не удалось открыть. Срок после продления не выдаётся за проверенный; файл приложения не подтверждён как сводная редакция2026. Вложение Минтруда содержит незаполненные реквизиты, возможный проект; не импортируется как принятый акт.",
     "attachment_url": "https://mintrud.gov.ru/uploads/magic/ru-RU/Document-0-9356-src-1610964888.0857.docx"
   },
@@ -318,10 +274,6 @@
     "content_kind": "metadata_and_unverified_attachment",
     "full_text_included": false,
     "current_consolidation_verified": false,
-    "source_refs": [
-      "turn30view4",
-      "turn26search3"
-    ],
     "verification_notes": "Официальная исходная карточка открыта, приложение доступно по указанной в ней ссылке. Документ о продлении найден на официальном портале, но первичный текст не удалось открыть. Срок после продления не выдаётся за проверенный; файл приложения не подтверждён как сводная редакция2026. Вложение Минтруда содержит незаполненные реквизиты, возможный проект; не импортируется как принятый акт.",
     "attachment_url": "https://mintrud.gov.ru/uploads/magic/ru-RU/Document-0-9344-src-1610720172.427.docx"
   },
@@ -342,10 +294,6 @@
     "content_kind": "metadata_and_unverified_attachment",
     "full_text_included": false,
     "current_consolidation_verified": false,
-    "source_refs": [
-      "turn30view5",
-      "turn26search3"
-    ],
     "verification_notes": "Официальная исходная карточка открыта, приложение доступно по указанной в ней ссылке. Документ о продлении найден на официальном портале, но первичный текст не удалось открыть. Срок после продления не выдаётся за проверенный; файл приложения не подтверждён как сводная редакция2026. Вложение Минтруда содержит незаполненные реквизиты, возможный проект; не импортируется как принятый акт.",
     "attachment_url": "https://mintrud.gov.ru/uploads/magic/ru-RU/Document-0-9350-src-1610733562.6443.docx"
   },
@@ -366,10 +314,6 @@
     "content_kind": "metadata_and_unverified_attachment",
     "full_text_included": false,
     "current_consolidation_verified": false,
-    "source_refs": [
-      "turn30view3",
-      "turn26search3"
-    ],
     "verification_notes": "Официальная исходная карточка открыта, приложение доступно по указанной в ней ссылке. Документ о продлении найден на официальном портале, но первичный текст не удалось открыть. Срок после продления не выдаётся за проверенный; файл приложения не подтверждён как сводная редакция2026. Вложение Минтруда содержит незаполненные реквизиты, возможный проект; не импортируется как принятый акт.",
     "attachment_url": "https://mintrud.gov.ru/uploads/magic/ru-RU/Document-0-9349-src-1610732020.1855.docx"
   },
@@ -390,9 +334,6 @@
     "content_kind": "metadata_and_original_summary",
     "full_text_included": false,
     "current_consolidation_verified": false,
-    "source_refs": [
-      "turn26search3"
-    ],
     "verification_notes": "Официальный адрес найден поиском; обе попытки открытия /document/ и /Document/View/ дали Internal Error. Не заявлять подтверждённые даты2031/2027 без первичного текста."
   }
 ]

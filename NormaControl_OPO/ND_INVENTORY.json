@@ -8,9 +8,11 @@
       "local_file": "regulations_texts/ND/LAW2395.docx",
       "revision_from_document": "08.03.2026",
       "saved_on_from_document": "01.10.2026",
-      "sha256": "86d53739d6ded13191c93c460774e0e35851b28421d43f76be53b136d960bdd4",
+      "sha256": "266b5afaafb41d3864a51a92b50dc501adeda60ae3f4ead468e8094742c52df6",
       "paragraph_text_chars": 306456,
-      "indexed_chunks": 1237
+      "indexed_chunks": 1219,
+      "original_sha256": "86d53739d6ded13191c93c460774e0e35851b28421d43f76be53b136d960bdd4",
+      "service_blocks_removed": 18
     },
     {
       "act_id": "PP1363",
@@ -19,9 +21,11 @@
       "local_file": "regulations_texts/ND/PP1363.docx",
       "revision_from_document": "",
       "saved_on_from_document": "01.10.2026",
-      "sha256": "07ebbe984d99ab6abea0a88f996b30deaa96dee9a4ccc395d9d73574ee3ad4d5",
+      "sha256": "e24a869c85094897c54dc77b5b3c5071d77ea4e8313b0f6933a8b5a173b4b680",
       "paragraph_text_chars": 201775,
-      "indexed_chunks": 293
+      "indexed_chunks": 293,
+      "original_sha256": "07ebbe984d99ab6abea0a88f996b30deaa96dee9a4ccc395d9d73574ee3ad4d5",
+      "service_blocks_removed": 0
     },
     {
       "act_id": "PP1661",
@@ -30,9 +34,11 @@
       "local_file": "regulations_texts/ND/PP1661.docx",
       "revision_from_document": "07.03.2026",
       "saved_on_from_document": "01.10.2026",
-      "sha256": "4a09f1dd1b76353ecaf05594a84b0b36f7f3dae1fa4b7f0ff7ffda2a194ee64b",
+      "sha256": "500df7963ad6d924172e8da0650f702cae6a3e0e01fbe116ff1b8d15ee9de542",
       "paragraph_text_chars": 32200,
-      "indexed_chunks": 143
+      "indexed_chunks": 142,
+      "original_sha256": "4a09f1dd1b76353ecaf05594a84b0b36f7f3dae1fa4b7f0ff7ffda2a194ee64b",
+      "service_blocks_removed": 1
     },
     {
       "act_id": "PP13",
@@ -41,9 +47,11 @@
       "local_file": "regulations_texts/ND/PP13.docx",
       "revision_from_document": "29.09.2025",
       "saved_on_from_document": "01.10.2026",
-      "sha256": "28fc13dd0cb1a46bca6c50a54051c50d9c8de9986f9d1409659005cda42a6deb",
+      "sha256": "7a592bd8a36334c73940dc9a1e41df40d21b2adf32aa0616d04aeabe1d1a2f1d",
       "paragraph_text_chars": 34560,
-      "indexed_chunks": 155
+      "indexed_chunks": 155,
+      "original_sha256": "28fc13dd0cb1a46bca6c50a54051c50d9c8de9986f9d1409659005cda42a6deb",
+      "service_blocks_removed": 0
     },
     {
       "act_id": "PP1437",
@@ -52,9 +60,11 @@
       "local_file": "regulations_texts/ND/PP1437.docx",
       "revision_from_document": "05.08.2026",
       "saved_on_from_document": "01.10.2026",
-      "sha256": "984e757e94238c939a2f31a698ce68fcb46ad5c529a3880ce98b2a1976593efc",
+      "sha256": "09a1dc5aeb2804193a610eddab4de7dd3ba3d6451b4cf4c9b7eaa3d4f37df4a0",
       "paragraph_text_chars": 7411,
-      "indexed_chunks": 60
+      "indexed_chunks": 60,
+      "original_sha256": "984e757e94238c939a2f31a698ce68fcb46ad5c529a3880ce98b2a1976593efc",
+      "service_blocks_removed": 0
     },
     {
       "act_id": "PP1243",
@@ -63,9 +73,11 @@
       "local_file": "regulations_texts/ND/PP1243.docx",
       "revision_from_document": "30.06.2021",
       "saved_on_from_document": "01.10.2026",
-      "sha256": "ed05243e26f2c3b76296ab3c6ce22e25b8431ad40d2dc3dc6c9ac56e42e37492",
+      "sha256": "12f81ad070f3466916ac350a37cdb2d8c485be36337a76d24ad1c53fd448218f",
       "paragraph_text_chars": 7762,
-      "indexed_chunks": 61
+      "indexed_chunks": 60,
+      "original_sha256": "ed05243e26f2c3b76296ab3c6ce22e25b8431ad40d2dc3dc6c9ac56e42e37492",
+      "service_blocks_removed": 1
     },
     {
       "act_id": "PP2168",
@@ -74,9 +86,11 @@
       "local_file": "regulations_texts/ND/PP2168.docx",
       "revision_from_document": "29.07.2023",
       "saved_on_from_document": "01.10.2026",
-      "sha256": "a8ed00dbcfbb3db521a1315128f3d9871fa8b4814a7cfcae9fe75c8769263509",
+      "sha256": "41bed6c084f1a4823b584b377d7d7dfb206cdea29111411243c8dc7d2d14d597",
       "paragraph_text_chars": 21040,
-      "indexed_chunks": 143
+      "indexed_chunks": 143,
+      "original_sha256": "a8ed00dbcfbb3db521a1315128f3d9871fa8b4814a7cfcae9fe75c8769263509",
+      "service_blocks_removed": 0
     },
     {
       "act_id": "RTN503",
@@ -85,9 +99,11 @@
       "local_file": "regulations_texts/ND/RTN503.docx",
       "revision_from_document": "16.02.2026",
       "saved_on_from_document": "01.10.2026",
-      "sha256": "fdc5604792544e13630b0611608f893da6222203572ea8506278d744f3b86922",
+      "sha256": "112b1016a05c0b159bf18e8985a944c22189c9c281e4d47439a316adb9e03586",
       "paragraph_text_chars": 56724,
-      "indexed_chunks": 488
+      "indexed_chunks": 488,
+      "original_sha256": "fdc5604792544e13630b0611608f893da6222203572ea8506278d744f3b86922",
+      "service_blocks_removed": 0
     },
     {
       "act_id": "FNP528",
@@ -96,9 +112,11 @@
       "local_file": "regulations_texts/ND/FNP528.docx",
       "revision_from_document": "03.03.2026",
       "saved_on_from_document": "01.10.2026",
-      "sha256": "677a303970d8e10df850c9785f7e2ba9653c0715ed1709af3734e04e687fd431",
+      "sha256": "737ad8bed04fedb32392f9a48ce83e850a89868ffd8dab98d04623bfb736ab85",
       "paragraph_text_chars": 108282,
-      "indexed_chunks": 496
+      "indexed_chunks": 496,
+      "original_sha256": "677a303970d8e10df850c9785f7e2ba9653c0715ed1709af3734e04e687fd431",
+      "service_blocks_removed": 0
     },
     {
       "act_id": "FNP529",
@@ -107,9 +125,11 @@
       "local_file": "regulations_texts/ND/FNP529.docx",
       "revision_from_document": "03.03.2026",
       "saved_on_from_document": "01.10.2026",
-      "sha256": "a3846e6810685b46573881a54b63936eed042f0dd0027055bd66e8b938729224",
+      "sha256": "a63f4b94fd23a31e95897feab642ebeca367c5768bdd62314fe9a9a42bfe5afd",
       "paragraph_text_chars": 93510,
-      "indexed_chunks": 500
+      "indexed_chunks": 500,
+      "original_sha256": "a3846e6810685b46573881a54b63936eed042f0dd0027055bd66e8b938729224",
+      "service_blocks_removed": 0
     },
     {
       "act_id": "FNP533",
@@ -118,9 +138,11 @@
       "local_file": "regulations_texts/ND/FNP533.docx",
       "revision_from_document": "03.03.2026",
       "saved_on_from_document": "01.10.2026",
-      "sha256": "f15e2c87ed2d6c3add00129ca9068699342e63799c63206bceb4a978cfc2544f",
+      "sha256": "b4002d14bfd8d56ad7a9b25332cfd2eb49c5b607983a5790969afc1db6148ae4",
       "paragraph_text_chars": 208575,
-      "indexed_chunks": 1004
+      "indexed_chunks": 1003,
+      "original_sha256": "f15e2c87ed2d6c3add00129ca9068699342e63799c63206bceb4a978cfc2544f",
+      "service_blocks_removed": 1
     },
     {
       "act_id": "FNP534",
@@ -129,9 +151,11 @@
       "local_file": "regulations_texts/ND/FNP534.docx",
       "revision_from_document": "03.03.2026",
       "saved_on_from_document": "01.10.2026",
-      "sha256": "c52b32e6390a90fe49eb09d835e7bef601d2c12c99ad9a6163911e057ac920fa",
+      "sha256": "46780ee6b2ba0712e305ba4d0bea1623fb037d97dc81c56ee34a9193d15a4634",
       "paragraph_text_chars": 870561,
-      "indexed_chunks": 5717
+      "indexed_chunks": 5717,
+      "original_sha256": "c52b32e6390a90fe49eb09d835e7bef601d2c12c99ad9a6163911e057ac920fa",
+      "service_blocks_removed": 0
     },
     {
       "act_id": "FNP536",
@@ -140,9 +164,11 @@
       "local_file": "regulations_texts/ND/FNP536.docx",
       "revision_from_document": "",
       "saved_on_from_document": "01.10.2026",
-      "sha256": "67a7963399b16927290e66849eb35352b1864014f45e5a5e9a4d8f6e9fd3854d",
+      "sha256": "83f5050b13562d022ae029f9c7fb3bb511e72b85cd3e451c0417c9d57a6b0e1a",
       "paragraph_text_chars": 615365,
-      "indexed_chunks": 3153
+      "indexed_chunks": 3148,
+      "original_sha256": "67a7963399b16927290e66849eb35352b1864014f45e5a5e9a4d8f6e9fd3854d",
+      "service_blocks_removed": 5
     },
     {
       "act_id": "FNP420",
@@ -151,9 +177,11 @@
       "local_file": "regulations_texts/ND/FNP420.docx",
       "revision_from_document": "04.03.2026",
       "saved_on_from_document": "01.10.2026",
-      "sha256": "4c2efa9300fd33ea9c1399906753bedabdccc7505ff9f89a9fb65f9e5ab5ecb1",
+      "sha256": "33290dace812a85ced7144ddadaa07ec8e3211733f56c0e1dfa00a1b4cf549d3",
       "paragraph_text_chars": 29207,
-      "indexed_chunks": 205
+      "indexed_chunks": 204,
+      "original_sha256": "4c2efa9300fd33ea9c1399906753bedabdccc7505ff9f89a9fb65f9e5ab5ecb1",
+      "service_blocks_removed": 1
     },
     {
       "act_id": "FNP444",
@@ -162,9 +190,11 @@
       "local_file": "regulations_texts/ND/FNP444.docx",
       "revision_from_document": "",
       "saved_on_from_document": "01.10.2026",
-      "sha256": "42477c8f1866ae52cf49e8425713778ea64043f1de464e6d4adb1758c76a79dd",
+      "sha256": "558a3ad3f3312cba7a5921b8d8447ef7c785c758b533b719120c9e82ef7eaead",
       "paragraph_text_chars": 124530,
-      "indexed_chunks": 630
+      "indexed_chunks": 630,
+      "original_sha256": "42477c8f1866ae52cf49e8425713778ea64043f1de464e6d4adb1758c76a79dd",
+      "service_blocks_removed": 0
     },
     {
       "act_id": "FNP461",
@@ -173,9 +203,11 @@
       "local_file": "regulations_texts/ND/FNP461.docx",
       "revision_from_document": "16.04.2026",
       "saved_on_from_document": "01.10.2026",
-      "sha256": "5ab5e83741a53ae37dc4b247e18bc162401fc7583f38de765c04198ceb92eed6",
+      "sha256": "631134636694b9b3e66a86e1a9b111420e93de375d22a735befe80ede8bc3e98",
       "paragraph_text_chars": 216622,
-      "indexed_chunks": 1323
+      "indexed_chunks": 1322,
+      "original_sha256": "5ab5e83741a53ae37dc4b247e18bc162401fc7583f38de765c04198ceb92eed6",
+      "service_blocks_removed": 1
     },
     {
       "act_id": "FZ99",
@@ -184,9 +216,11 @@
       "local_file": "regulations_texts/ND/FZ99.docx",
       "revision_from_document": "04.08.2026",
       "saved_on_from_document": "01.10.2026",
-      "sha256": "0794f39f7cfab49c35154d1ff4b6b0519941a443b2719f37ab69fed0dea0173d",
+      "sha256": "4597c2e9779aac1aa4a02b3724fad21e38f5d26de32faaf65f5a9e6529b676e3",
       "paragraph_text_chars": 202912,
-      "indexed_chunks": 814
+      "indexed_chunks": 799,
+      "original_sha256": "0794f39f7cfab49c35154d1ff4b6b0519941a443b2719f37ab69fed0dea0173d",
+      "service_blocks_removed": 15
     },
     {
       "act_id": "FZ116",
@@ -195,9 +229,11 @@
       "local_file": "regulations_texts/ND/FZ116.docx",
       "revision_from_document": "31.07.2025",
       "saved_on_from_document": "01.10.2026",
-      "sha256": "02946734f2379ca84729a66c9e3559bc2b9067f9f4f77f2c406d5fa400a47417",
+      "sha256": "2f63c9deb28eaaef32b875b74bab0ce74f90d56922f19acca967b8fce971b307",
       "paragraph_text_chars": 95109,
-      "indexed_chunks": 518
+      "indexed_chunks": 497,
+      "original_sha256": "02946734f2379ca84729a66c9e3559bc2b9067f9f4f77f2c406d5fa400a47417",
+      "service_blocks_removed": 21
     },
     {
       "act_id": "FZ225",
@@ -206,14 +242,17 @@
       "local_file": "regulations_texts/ND/FZ225.docx",
       "revision_from_document": "29.12.2022",
       "saved_on_from_document": "01.10.2026",
-      "sha256": "d1e8bbe71aad71545fa564310be65c33371468f261b05684547441e00c325cde",
+      "sha256": "2726629ce4c568f6f539d326db91e1badf570259175ec82e40ae8b93c5e5ef75",
       "paragraph_text_chars": 81346,
-      "indexed_chunks": 430
+      "indexed_chunks": 428,
+      "original_sha256": "d1e8bbe71aad71545fa564310be65c33371468f261b05684547441e00c325cde",
+      "service_blocks_removed": 2
     }
   ],
   "count": 19,
   "legal_currentness_confirmed": false,
   "excluded_by_user": [
     "Приказ Ростехнадзора №517 от 11.12.2020"
-  ]
+  ],
+  "service_text_cleaning": "Служебные надписи справочной правовой системы удалены инструментом tools/clean_docx_service.py; нумерация блоков сохранена."
 }
