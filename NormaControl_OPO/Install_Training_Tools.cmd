@@ -3,7 +3,7 @@ chcp 65001 >nul
 cd /d "%~dp0"
 echo Устанавливаются дополнительные библиотеки обучения (около 3-4 ГБ). Нужен интернет.
 echo PyTorch ставится в сборке с CUDA для видеокарт NVIDIA: обычный пакет PyPI для Windows работает только на CPU.
-rem pip загружается с PyPI с проверкой SHA-256 (колесо pip не входит в архив).
+rem pip из комплекта Python, а если его нет — с PyPI с проверкой SHA-256.
 "%~dp0runtime\python.exe" -I -X utf8 "%~dp0tools\bootstrap_pip.py"
 if errorlevel 1 goto fail
 rem Сначала новейшая сборка CUDA 13.0, затем 12.8 и 12.6.

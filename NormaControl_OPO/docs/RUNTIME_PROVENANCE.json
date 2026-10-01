@@ -29,16 +29,16 @@
     "command": "runtime\\pythonw.exe -I -X utf8 app_entry.py",
     "rc2_change": "добавлен -X utf8"
   },
-  "lean_runtime_rc3": {
-    "reason": "один архив меньше 30 МБ (ограничение передачи файла)",
+  "rc3_runtime": {
+    "state": "облегчённый runtime: 928 неиспользуемых файлов исключены (tools/build_release.py, LEAN_REMOVE); все оставшиеся файлы совпадают по SHA-256 с поставкой RC1",
     "removed": [
-      "PIL/_avif и PIL/_webp (форматы AVIF/WebP; Pillow штатно отключает их)",
-      "reportlab/fonts (образцы шрифтов; отчёты используют resources/DejaVuSans.ttf)",
-      "ensurepip/_bundled (pip загружается по требованию tools/bootstrap_pip.py с проверкой SHA-256 по PyPI)",
+      "PIL/_avif, PIL/_webp (AVIF/WebP в Pillow; изображения для OCR передаются Tesseract напрямую)",
+      "reportlab/fonts (образцы; отчёты используют resources/DejaVuSans.ttf)",
+      "ensurepip/_bundled (pip загружается tools/bootstrap_pip.py с PyPI со сверкой SHA-256)",
       "idlelib, venv, pydoc_data, NEWS.txt",
       "tcl: tk8.6/demos, tk8.6/images, tcl8.6/tzdata, файлы сборки (*.lib, nmake, *Config.sh), libs/"
     ],
-    "remaining_files_verified": "все оставшиеся файлы runtime совпадают по SHA-256 с поставкой RC1",
-    "checked": "91 unittest и приёмка на облегчённом runtime под Wine; pip bootstrap под Wine"
+    "reason": "один архив до 30 МБ без потери функций программы",
+    "full_mode": "tools/build_release.py без --lean собирает полный runtime (архив ~39 МБ, для передачи — с --split-mb)"
   }
 }

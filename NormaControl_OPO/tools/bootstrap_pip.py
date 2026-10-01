@@ -1,6 +1,7 @@
 """Установка pip во встроенный Python при подготовке инструментов обучения.
 
-Колесо pip не входит в архив программы (экономия размера). Скрипт берёт с PyPI
+Если в комплекте Python есть колесо pip — используется ensurepip. Иначе (облегчённая
+сборка, колесо исключено ради размера архива) скрипт берёт с PyPI
 последний выпуск pip (только с pypi.org / files.pythonhosted.org), сверяет
 SHA-256 с данными PyPI и устанавливает его. Нужен интернет — как и для PyTorch.
 
@@ -36,6 +37,12 @@ def main():
         return 0
     except ImportError:
         pass
+    import ensurepip
+    bundled = Path(ensurepip.__file__).parent / '_bundled'
+    if any(bundled.glob('pip-*.whl')):
+        print('Установка pip из комплекта Python (без интернета).', flush=True)
+        return subprocess.call([sys.executable, '-I', '-X', 'utf8', '-m', 'ensurepip'])
+    print('Колеса pip в комплекте нет: загрузка с PyPI.', flush=True)
     info = json.loads(fetch('https://pypi.org/pypi/pip/json', 5 * 1024 * 1024))
     files = [f for f in info['urls'] if f['packagetype'] == 'bdist_wheel' and f['filename'].endswith('py3-none-any.whl')]
     if not files:

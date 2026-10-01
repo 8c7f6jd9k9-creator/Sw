@@ -24,9 +24,13 @@ RC3 = RC2 + защита лицензией на USB-флешке + провер
 
 ## Один архив
 
-Ограничение передачи файла — 30 МБ; полный архив занимал 38.9 МБ. Из встроенного runtime исключены части, которые программа не использует (928 файлов: модули AVIF/WebP у Pillow, образцы шрифтов ReportLab, колесо pip, IDLE, venv, справка pydoc, NEWS.txt, демо и часовые пояса Tcl/Tk, файлы для сборки расширений); перечень — docs/RUNTIME_PROVENANCE.json и tools/build_release.py (LEAN_REMOVE). Остальные файлы runtime совпадают по SHA-256 с поставкой RC1. Итог: один архив 29.2 МБ.
+Поставка — один архив NormaControl_OPO_Windows_1.0_RC3.zip (29.2 МБ; ограничение передачи файла — 30 МБ): READ_ME_FIRST_RU.txt, папка программы NormaControl_OPO и папка комплекта издателя NormaControl_License_Kit_PRIVATE.
 
-Проверено на облегчённом runtime под Wine: 91 unittest OK (3 пропуска), приёмка 11 OK / 0 FAIL / 2 SKIP, PDF-отчёт с кириллицей и фото, запуск без ключа — отказ. pip для инструментов обучения теперь загружается по требованию (tools/bootstrap_pip.py: только pypi.org/files.pythonhosted.org, сверка SHA-256): проверено на Windows-runtime под Wine и на Linux; первый вариант (запуск pip из колеса как скрипта) pip на Windows отверг — заменён запуском «как python -m pip».
+Чтобы уложиться в один файл без потери функций, из встроенного runtime исключены 928 файлов, которые программа не использует: IDLE, venv, справка pydoc, NEWS.txt, демо и картинки Tk, часовые пояса Tcl, файлы для сборки расширений, кодеки AVIF/WebP у Pillow (изображения для OCR передаются Tesseract напрямую, вложения ситуаций — JPEG/PNG/TIFF), образцы шрифтов ReportLab (отчёты используют свой DejaVuSans.ttf; трассировка открытия файлов при построении PDF подтвердила, что каталог шрифтов ReportLab не читается) и колесо pip. Остальные файлы runtime совпадают по SHA-256 с поставкой RC1. Перечень — docs/RUNTIME_PROVENANCE.json, tools/build_release.py (LEAN_REMOVE).
+
+Единственное отличие в поведении: pip для инструментов обучения загружается при их установке (tools/bootstrap_pip.py: только pypi.org/files.pythonhosted.org, сверка SHA-256; при наличии колеса в комплекте — ensurepip без интернета). Установка PyTorch требует интернета в любом случае. Оба пути проверены (Windows-runtime под Wine и Linux); запуск pip «как python -m pip» нужен, иначе pip на Windows отказывается устанавливать сам себя.
+
+Проверено на облегчённом runtime под Wine: 91 unittest OK (3 пропуска), self-test, приёмка 11 OK / 0 FAIL / 2 SKIP, PDF с кириллицей и фото, отказ без ключа, выдача лицензии комплектом из папки NormaControl_License_Kit_PRIVATE и приём её программой.
 
 ## Не проверено
 
