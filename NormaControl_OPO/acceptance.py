@@ -26,7 +26,8 @@ from datetime import datetime
 from pathlib import Path
 
 BASE = Path(__file__).resolve().parent
-sys.path.insert(0, str(BASE))
+if str(BASE) not in sys.path:
+    sys.path.append(str(BASE))
 
 QUERY = 'наряд-допуск газоопасные работы'
 SITUATION = ('При проведении газоопасных работ в резервуаре не оформлен наряд-допуск, '
@@ -93,6 +94,13 @@ class Run:
         return entry
 
     # --- шаги -------------------------------------------------------------
+    def license(self):
+        import usb_license
+        status = usb_license.find_license()
+        if not status.ok:
+            raise RuntimeError(status.reason)
+        return status.public()
+
     def environment(self):
         import tkinter
         from hardware import diagnose
@@ -452,6 +460,8 @@ class Run:
         return {'real_data_unchanged': True}
 
     def run(self):
+        if self.step('Лицензия USB-ключа', self.license)['status'] != 'ok':
+            return self.finish()
         self.step('Окружение и зависимости', self.environment)
         self.step('Рабочая база не используется (до)', self.real_data_untouched_before)
         self.step('Первичная индексация корпуса НД', self.seed)
@@ -464,6 +474,9 @@ class Run:
         self.step('Локальная модель Ollama: ответ, ссылки, GPU, сеть', self.ollama)
         self.step('Диагностика обучения', self.training)
         self.step('Рабочая база не используется (после)', self.real_data_untouched_after)
+        return self.finish()
+
+    def finish(self):
         statuses = [s['status'] for s in self.report['steps']]
         self.report['summary'] = {'ok': statuses.count('ok'), 'fail': statuses.count('fail'), 'skip': statuses.count('skip'),
                                   'finished': datetime.now().isoformat(timespec='seconds')}

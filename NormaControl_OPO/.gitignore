@@ -17,3 +17,7 @@ __pycache__/
 *.pyc
 _wine_shim.py
 acceptance/
+# Лицензирование: закрытый ключ издателя и выданные лицензии никогда не коммитятся.
+*vendor_key*.json
+NormaControl.lic
+issued_licenses.csv

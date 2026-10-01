@@ -22,7 +22,8 @@ from pathlib import Path
 from xml.etree import ElementTree as ET
 
 BASE = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(BASE))
+if str(BASE) not in sys.path:
+    sys.path.append(str(BASE))
 
 # Технические факты о программе, проверенные по исходному коду и README.
 EXAMPLES = [

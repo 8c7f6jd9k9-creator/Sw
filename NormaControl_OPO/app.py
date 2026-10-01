@@ -13,8 +13,10 @@ from regulations import NormativeCatalog
 from regulations_ui import RegulationsTab
 from situation_ui import SituationsTab, RequirementsTab
 from ui_scale import fit_window, px, responsive_wraplength, scale_treeview_columns
+import usb_license
+from license_ui import LicenseWatch
 
-VERSION='1.0 RC2'
+VERSION='1.0 RC3'
 
 BASE=Path(__file__).resolve().parent
 
@@ -35,6 +37,8 @@ def open_file(path):
 
 class App(tk.Tk):
     def __init__(self):
+        # Без действительной лицензии на USB-флешке окно не создаётся (LicenseRequired).
+        self.license_status=usb_license.require()
         super().__init__()
         self.title(f'НормаКонтроль ОПО • Windows • {VERSION}')
         scale_treeview_columns(self)
@@ -111,8 +115,20 @@ class App(tk.Tk):
             self.status.configure(text=f'Данные: {self.store.root} • Обновление базы: очищенных текстов НД {upgraded}, источников с удалёнными служебными надписями {cleanup.get("sources",0)}. Ссылки и отметки сохранены.')
         if self.normative_seed.get('errors'):
             self.status.configure(text=self.status.cget('text')+' • Ошибки каталога: '+str(len(self.normative_seed['errors']))+' (вкладка «Нормативный каталог»).')
+        lic=self.license_status.payload
+        self.status.configure(text=self.status.cget('text')+f' • Лицензия: {lic.get("licensee","")} ({lic.get("license_id","")}), '+(f'до {lic["expires"]}' if lic.get('expires') else 'бессрочно'))
         responsive_wraplength(self)
+        self.license_watch=LicenseWatch(self,self._license_lost)
         self.refresh_assets()
+    def _license_lost(self,status):
+        # Сначала закрыть программу (данные уже записаны), сообщение покажет entry после выхода.
+        self.license_lost_status=status
+        try:
+            from entry import log_event
+            log_event('license','Работа остановлена: флешка-ключ не обнаружена. '+status.reason)
+        except Exception:
+            pass
+        self.quit_app()
     def _seed_progress(self,index,total,title):
         self.splash.configure(text=f'НормаКонтроль ОПО: подготовка базы знаний… {index} из {total}\n{title[:120]}\n\nПервый запуск или обновление может занять несколько минут. Не закрывайте окно.')
         self.update()
@@ -230,6 +246,7 @@ class App(tk.Tk):
             missing=f'; отсутствуют файлы: {len(result["missing_files"])}' if result['missing_files'] else ''
             self.status.configure(text=f'Резервная копия сохранена и проверена (integrity {result["integrity"]}, файлов {result["files"]}{missing}): {path}')
     def quit_app(self):
+        if getattr(self,'license_watch',None): self.license_watch.stop()
         self.agents.shutdown()
         self.knowledge.shutdown()
         self.training.shutdown()
